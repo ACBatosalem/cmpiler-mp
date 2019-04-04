@@ -1,0 +1,172 @@
+PROGRAM MAIN;
+{this checks the following:
+[/] integer init
+[/] char init
+[/] string init
+[/] constant init}
+VAR
+  number : integer;
+  a, b   : integer;
+  X      : integer;
+  y      : integer;
+  chr    : char;
+  stmt   : string;
+
+const
+  MX = 40;
+  H1 = 'hello';
+  Ca2 = 'Q';
+  b2 = false;
+  
+  //error could be a@k
+
+(*This is a comment hehe
+   comment hehe
+   comment hehe*)
+   {this is
+   multi-line}
+   { Comment 1 (* comment 2 *) }  
+    (* Comment 1 { comment 2 } *)  
+    { comment 1 // Comment 2 }  
+    (* comment 1 // Comment 2 *)  
+    // comment 1 (* comment 2 *)  
+    // comment 1 { comment 2 } 
+
+{this function tests the following:
+[/] conditional statements
+[/] >, >=, <=, <>, =
+[/] number assignment
+[/] local variables
+[/] function
+[/] and or not
+[/] boolean
+}
+function max(num1, num2: integer): integer;
+
+var result: integer;
+var boo : boolean;
+
+begin
+   writeln ('!!! MAX FUNCTION !!!');
+   writeln('~max of ', num1 , ' and ' , num2 , ' ~' );
+   boo := b2;
+   result := 0;
+   writeln('result is initially ', result);
+   
+   X := 0;
+   X := Y + num1 + num2;
+   
+   if not( X < 10 ) then
+   begin
+        writeln('boo will be changed to false');
+        boo := false
+   end
+   else
+	writeln( 'boo will still be true' );
+   write('boo is ');
+   writeln(boo);
+   writeln('~');    
+
+   if (num1 > num2) then
+      result := num1
+   
+   else
+      result := num2;
+
+// greater than and not equal to
+   if ((num1 > 1) and (num1 <> 2)) then				//error could be remove parentheses
+      writeln( '1. num1 is greater than 1 but not equal to 2' )
+   else
+      writeln( '1. num1 is either equal to 1 or equal to 2' );
+
+// greater than inclusive OR less than inclusive
+   if ((num1 >= -1) or (num2 <= 3)) then
+      writeln( '2. num1 >= -1 or num2 <= 3' )
+   else
+      writeln( '2. It went to the else' );
+
+//equals
+   if (result = num1) then
+      writeln( '3. result is num1' )
+   else
+      writeln( '3. result is num2' );
+
+   writeln('result is now ', result);
+   writeln();
+   Writeln;
+   max := result;
+end;
+
+{this tests the following:
+[/] procedure
+[/] array
+[/] loops
+[/] conditional 
+[/] constants
+[/] not
+[/] <
+}
+procedure printArray();
+ var n: array [1..10] of integer;   (* n is an array of 10 integers *)
+ var i,j : integer;
+begin 
+   writeln ('!!! PRINTARRAY PROCEDURE !!!');  
+   
+   
+   (* initialize elements of array n to 0 *)        
+   for i := 1 to 10 do
+       n[ i ] := i + 100;   (* set element at location i to i + 100 *)
+    (* output each array element's value *)
+   
+   for j:= 1 to 10 do
+      writeln('n[', j, '] = ', n[j] );
+   write('const H1 is: ');
+   writeln(H1);
+   writeln();
+   Writeln;
+end; 
+
+
+{this tests the following:
+[/] string assign a value
+[/] string take a var with a string value
+[/] writeln
+[/] write
+[/] readln
+[/] constant 
+}
+procedure printString();
+var temp : string;
+begin
+   writeln ('!!! PRINTSTRING PROCEDURE !!!');
+   writeln(' :D');
+   stmt := 'Please input a string';
+   Writeln(stmt);
+   readln(temp);
+   stmt := temp;
+   chr := 'c';
+   write('Your input was: ');
+   Writeln(stmt);
+   write('chr was initially: ');
+   Writeln(chr);
+   chr := Ca2;
+   write('chr is now: ');
+   Writeln(chr);
+   writeln();
+   Writeln;
+end;   
+
+BEGIN {MAIN}
+   number := -2;
+   a := number;
+   b := +10 + a mod 2; {error of this could be % instead of mod}
+   y := 20 div 5 + 3; 
+   printArray();
+   printString();
+   writeln(max(b, MX));
+   writeln('b, y, and X respectively:');
+   writeln(b);
+   writeln(y);
+   writeln(X);
+  
+END.  {MAIN}
