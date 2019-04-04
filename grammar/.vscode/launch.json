@@ -4,12 +4,13 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+        
         {
             "type": "antlr-debug",
             "request": "launch",
             "name": "Debug Current Grammar",
-            "grammar": "calc.g4",
-            "startRule": "compound_statement",
+            "grammar": "pascal.g4",
+            "startRule": "program",
             "printParseTree": true,
             "visualParseTree": true,
             "input": "input.txt"
