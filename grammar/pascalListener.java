@@ -127,6 +127,16 @@ public interface pascalListener extends ParseTreeListener {
 	 */
 	void exitString(pascalParser.StringContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link pascalParser#character}.
+	 * @param ctx the parse tree
+	 */
+	void enterCharacter(pascalParser.CharacterContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pascalParser#character}.
+	 * @param ctx the parse tree
+	 */
+	void exitCharacter(pascalParser.CharacterContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link pascalParser#typeDefinitionPart}.
 	 * @param ctx the parse tree
 	 */

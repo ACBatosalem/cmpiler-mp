@@ -159,6 +159,18 @@ public class pascalBaseListener implements pascalListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterCharacter(pascalParser.CharacterContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitCharacter(pascalParser.CharacterContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterTypeDefinitionPart(pascalParser.TypeDefinitionPartContext ctx) { }
 	/**
 	 * {@inheritDoc}

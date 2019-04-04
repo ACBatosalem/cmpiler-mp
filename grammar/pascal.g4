@@ -71,6 +71,7 @@ constant
    | identifier
    | sign identifier
    | string
+   | character
    ;
 
 unsignedNumber
@@ -94,6 +95,10 @@ bool
 
 string
    : STRING_LITERAL
+   ;
+
+character
+   : CHAR_LITERAL
    ;
 
 typeDefinitionPart
@@ -296,6 +301,7 @@ factor
 unsignedConstant
    : unsignedNumber
    | string
+   | character
    ;
 
 functionDesignator
@@ -458,6 +464,9 @@ COMMENT_1: '(*' .*? '*)' -> skip;
 COMMENT_2: '{' .*? '}' -> skip;
 NUMBER     : [0-9]+ ;
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
+CHAR_LITERAL
+   : '\'' (~ ('\'')) '\''
+   ;
 STRING_LITERAL
    : '\'' ('\'\'' | ~ ('\''))* '\''
    ;

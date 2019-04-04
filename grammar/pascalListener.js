@@ -119,6 +119,15 @@ pascalListener.prototype.exitString = function(ctx) {
 };
 
 
+// Enter a parse tree produced by pascalParser#character.
+pascalListener.prototype.enterCharacter = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#character.
+pascalListener.prototype.exitCharacter = function(ctx) {
+};
+
+
 // Enter a parse tree produced by pascalParser#typeDefinitionPart.
 pascalListener.prototype.enterTypeDefinitionPart = function(ctx) {
 };
