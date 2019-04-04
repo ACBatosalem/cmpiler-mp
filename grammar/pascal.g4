@@ -72,6 +72,7 @@ constant
    | sign identifier
    | string
    | character
+   | bool
    ;
 
 unsignedNumber
@@ -238,8 +239,30 @@ unlabelledStatement
 
 simpleStatement
    : assignmentStatement
+   | ioStatement
    | procedureStatement
    | emptyStatement
+   ;
+
+ioStatement
+   : readln 
+   | write
+   | writeln
+   ;
+
+readln
+   : READLN LP identifierList RP
+   ;
+
+writeln
+   : WRITELN LP outputList RP
+   ;
+write
+   : WRITE LP outputList RP
+   ;
+
+outputList
+   : constant (COMMA constant)*
    ;
 
 assignmentStatement
@@ -423,12 +446,15 @@ OF: O F;
 OR: O R;
 PROCEDURE: P R O C E D U R E;
 PROGRAM: P R O G R A M;
+READLN: R E A D L N;
 SET: S E T;
 THEN: T H E N;
 TO: T O;
 TYPE: T Y P E;
 VAR: V A R;
 WHILE: W H I L E;
+WRITE: W R I T E;
+WRITELN: W R I T E L N;
 //WITH: W I T H;
 
 //ID: 'a';

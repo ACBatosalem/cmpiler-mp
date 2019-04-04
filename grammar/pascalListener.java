@@ -457,6 +457,56 @@ public interface pascalListener extends ParseTreeListener {
 	 */
 	void exitSimpleStatement(pascalParser.SimpleStatementContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link pascalParser#ioStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterIoStatement(pascalParser.IoStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pascalParser#ioStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitIoStatement(pascalParser.IoStatementContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link pascalParser#readln}.
+	 * @param ctx the parse tree
+	 */
+	void enterReadln(pascalParser.ReadlnContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pascalParser#readln}.
+	 * @param ctx the parse tree
+	 */
+	void exitReadln(pascalParser.ReadlnContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link pascalParser#writeln}.
+	 * @param ctx the parse tree
+	 */
+	void enterWriteln(pascalParser.WritelnContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pascalParser#writeln}.
+	 * @param ctx the parse tree
+	 */
+	void exitWriteln(pascalParser.WritelnContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link pascalParser#write}.
+	 * @param ctx the parse tree
+	 */
+	void enterWrite(pascalParser.WriteContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pascalParser#write}.
+	 * @param ctx the parse tree
+	 */
+	void exitWrite(pascalParser.WriteContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link pascalParser#outputList}.
+	 * @param ctx the parse tree
+	 */
+	void enterOutputList(pascalParser.OutputListContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link pascalParser#outputList}.
+	 * @param ctx the parse tree
+	 */
+	void exitOutputList(pascalParser.OutputListContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link pascalParser#assignmentStatement}.
 	 * @param ctx the parse tree
 	 */

@@ -1,5 +1,6 @@
 program MAIN;
 var X, Y, Z: string;
 BEGIN
-x := 'c'
+readln(x,y,z);
+writeln('LUH',-y,false,-1,9,'x')
 End. {MAIN}
