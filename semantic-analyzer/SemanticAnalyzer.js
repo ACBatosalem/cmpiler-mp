@@ -1,6 +1,6 @@
-const SymbolTable = require('../symbols/SymbolTable');
-const VariableSymbol = require('../symbols/VariableSymbol');
-const ProcedureSymbol = require('../symbols/ProcedureSymbol');
+const SymbolTable = require('../symbol-table/SymbolTable');
+const VariableSymbol = require('../symbol-table/VariableSymbol');
+const ProcedureSymbol = require('../symbol-table/ProcedureSymbol');
 
 // builds symbol table per scope
 class SemanticAnalyzer {
@@ -12,7 +12,8 @@ class SemanticAnalyzer {
     visit(node) {
         const visitor = this[`on${node.constructor.name}`];
     
-        return visitor.call(this.node);
+        console.log("scope: " + `on${node.constructor.name}`);
+        // return visitor.call(this.node);
     }
 
     // visitor from block (?) node
