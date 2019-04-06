@@ -9,11 +9,11 @@
             "type": "antlr-debug",
             "request": "launch",
             "name": "Debug Current Grammar",
-            "grammar": "pascal.g4",
+            "grammar": "./grammar/pascal.g4",
             "startRule": "program",
             "printParseTree": true,
             "visualParseTree": true,
-            "input": "input.txt"
+            "input": "./grammar/input.txt"
         }
     ]
 }

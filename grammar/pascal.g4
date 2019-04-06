@@ -473,5 +473,3 @@ STRING_LITERAL
 
 
 
-
-
