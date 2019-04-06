@@ -21,13 +21,14 @@ class SymbolTable {
     }
     
     define(symbol) {
+        //console.log(symbol.getName() + " " + symbol)
         this.symbols.set(symbol.getName(), symbol);
 
         return this;
     }
 
     lookup(name, currentScopeOnly = false) {
-        const symbol = this.symbols.getName();
+        const symbol = this.symbols.get(name);
 
         if(symbol) return symbol;
         if(currentScopeOnly) return null;
@@ -38,10 +39,10 @@ class SymbolTable {
         let list = '';
         
         for(const[key, value] of this.symbols.entries()) {
-            entries += `${key}:${value}\n`;
+            list += `${key}:${value}\n`;
         }
 
-        return `Scope Name: ${this.scopeName}\nScopeLevel: ${this.scopeLevel}\n\nEntries\n${entries}`;
+        return `Scope Name: ${this.scopeName}\nScopeLevel: ${this.scopeLevel}\n\nEntries\n${list}`;
     }
 
     create(scopeName, scopeLevel, enclosingScope) {

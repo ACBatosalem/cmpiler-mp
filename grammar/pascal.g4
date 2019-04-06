@@ -50,11 +50,20 @@ identifier
    ;
 
 block
-   : (constantDefinitionPart | variableDeclarationPart | procedureAndFunctionDeclarationPart)* compoundStatement
+   : declarations compoundStatement
    ;
 
+declarations
+   : (constantDefinitionPart 
+   | variableDeclarationPart 
+   | procedureAndFunctionDeclarationPart)*
+   ;
 constantDefinitionPart
-   : CONST (identifier EQUAL constant SEMI) +
+   : CONST (constantDefinition SEMI) +
+   ;
+
+constantDefinition
+   :identifier EQUAL constant
    ;
 
 constant
@@ -115,11 +124,7 @@ typeIdentifier
    | (CHAR | BOOLEAN | INTEGER | STRING)
    ;
 
-structuredType:
-   | unpackedStructuredType
-   ;
-
-unpackedStructuredType
+structuredType
    : arrayType
    ;
 
@@ -220,7 +225,7 @@ readln
    ;
 
 writeln
-   : WRITELN LP outputList RP
+   : WRITELN (LP outputList* RP)*
    ;
 write
    : WRITE LP outputList RP

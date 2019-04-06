@@ -1,9 +1,9 @@
 var antlr4 = require('antlr4/index.js');
-var PascalLexer = require("./pascalLexer.js");
-var PascalParser = require("./pascalParser.js");
-var PascalVisitorImpl = require("./pascalVisitorImpl.js");
-var PascalErrorListener = require('./pascalErrorListener.js').PascalErrorListener;
-var SemanticAnalyzer = require('../semantic-analyzer/SemanticAnalyzer.js');
+var PascalLexer = require("./grammar/pascalLexer.js");
+var PascalParser = require("./grammar/pascalParser.js");
+var PascalVisitorImpl = require("./semantic-analyzer/pascalVisitorImpl.js");
+var PascalErrorListener = require('./grammar/pascalErrorListener.js').PascalErrorListener;
+var SemanticAnalyzer = require('./semantic-analyzer/SemanticAnalyzer.js');
 
 var main = function(input) {
     var chars = new antlr4.InputStream(input);
@@ -23,7 +23,7 @@ var main = function(input) {
     //console.log(tree.toStringTree(parser.ruleNames));
 
     var printer = new PascalVisitorImpl.pascalVisitorImpl();
-    printer.visitProgram(tree);
+    printer.visit(tree);
     analyzer.visit(tree);
 
     //antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
@@ -37,4 +37,4 @@ var main = function(input) {
     return result;*/
 }
 
-main('program MAIN; var X, Y, Z: string;BEGIN End. {MAIN}')
+main('program MAIN; var X, Y, Z: string;procedure oof;var x:integer;; BEGIN End. {MAIN}')

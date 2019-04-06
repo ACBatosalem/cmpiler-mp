@@ -20,15 +20,6 @@ pascalListener.prototype.exitProgram = function(ctx) {
 };
 
 
-// Enter a parse tree produced by pascalParser#programHeading.
-pascalListener.prototype.enterProgramHeading = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#programHeading.
-pascalListener.prototype.exitProgramHeading = function(ctx) {
-};
-
-
 // Enter a parse tree produced by pascalParser#identifier.
 pascalListener.prototype.enterIdentifier = function(ctx) {
 };
@@ -44,6 +35,15 @@ pascalListener.prototype.enterBlock = function(ctx) {
 
 // Exit a parse tree produced by pascalParser#block.
 pascalListener.prototype.exitBlock = function(ctx) {
+};
+
+
+// Enter a parse tree produced by pascalParser#declarations.
+pascalListener.prototype.enterDeclarations = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#declarations.
+pascalListener.prototype.exitDeclarations = function(ctx) {
 };
 
 
@@ -83,15 +83,6 @@ pascalListener.prototype.exitUnsignedNumber = function(ctx) {
 };
 
 
-// Enter a parse tree produced by pascalParser#unsignedInteger.
-pascalListener.prototype.enterUnsignedInteger = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#unsignedInteger.
-pascalListener.prototype.exitUnsignedInteger = function(ctx) {
-};
-
-
 // Enter a parse tree produced by pascalParser#sign.
 pascalListener.prototype.enterSign = function(ctx) {
 };
@@ -125,42 +116,6 @@ pascalListener.prototype.enterCharacter = function(ctx) {
 
 // Exit a parse tree produced by pascalParser#character.
 pascalListener.prototype.exitCharacter = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#typeDefinitionPart.
-pascalListener.prototype.enterTypeDefinitionPart = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#typeDefinitionPart.
-pascalListener.prototype.exitTypeDefinitionPart = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#typeDefinition.
-pascalListener.prototype.enterTypeDefinition = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#typeDefinition.
-pascalListener.prototype.exitTypeDefinition = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#functionType.
-pascalListener.prototype.enterFunctionType = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#functionType.
-pascalListener.prototype.exitFunctionType = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#procedureType.
-pascalListener.prototype.enterProcedureType = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#procedureType.
-pascalListener.prototype.exitProcedureType = function(ctx) {
 };
 
 
@@ -269,15 +224,6 @@ pascalListener.prototype.enterComponentType = function(ctx) {
 
 // Exit a parse tree produced by pascalParser#componentType.
 pascalListener.prototype.exitComponentType = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#baseType.
-pascalListener.prototype.enterBaseType = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#baseType.
-pascalListener.prototype.exitBaseType = function(ctx) {
 };
 
 
@@ -395,15 +341,6 @@ pascalListener.prototype.enterStatement = function(ctx) {
 
 // Exit a parse tree produced by pascalParser#statement.
 pascalListener.prototype.exitStatement = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#unlabelledStatement.
-pascalListener.prototype.enterUnlabelledStatement = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#unlabelledStatement.
-pascalListener.prototype.exitUnlabelledStatement = function(ctx) {
 };
 
 
@@ -611,15 +548,6 @@ pascalListener.prototype.enterEmptyStatement = function(ctx) {
 
 // Exit a parse tree produced by pascalParser#emptyStatement.
 pascalListener.prototype.exitEmptyStatement = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#empty.
-pascalListener.prototype.enterEmpty = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#empty.
-pascalListener.prototype.exitEmpty = function(ctx) {
 };
 
 

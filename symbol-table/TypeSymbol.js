@@ -4,7 +4,7 @@ const Symbol = require('./Symbol');
 
 class TypeSymbol extends Symbol {
     toString() {
-        return `TypeSymbol(${this.getName})`;
+        return `TypeSymbol(${this.getName()})`;
     }
 
     static create(name) {

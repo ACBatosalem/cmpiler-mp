@@ -18,12 +18,6 @@ pascalVisitor.prototype.visitProgram = function(ctx) {
 };
 
 
-// Visit a parse tree produced by pascalParser#programHeading.
-pascalVisitor.prototype.visitProgramHeading = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
 // Visit a parse tree produced by pascalParser#identifier.
 pascalVisitor.prototype.visitIdentifier = function(ctx) {
   return this.visitChildren(ctx);
@@ -32,6 +26,12 @@ pascalVisitor.prototype.visitIdentifier = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#block.
 pascalVisitor.prototype.visitBlock = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
+// Visit a parse tree produced by pascalParser#declarations.
+pascalVisitor.prototype.visitDeclarations = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -60,12 +60,6 @@ pascalVisitor.prototype.visitUnsignedNumber = function(ctx) {
 };
 
 
-// Visit a parse tree produced by pascalParser#unsignedInteger.
-pascalVisitor.prototype.visitUnsignedInteger = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
 // Visit a parse tree produced by pascalParser#sign.
 pascalVisitor.prototype.visitSign = function(ctx) {
   return this.visitChildren(ctx);
@@ -86,30 +80,6 @@ pascalVisitor.prototype.visitString = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#character.
 pascalVisitor.prototype.visitCharacter = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#typeDefinitionPart.
-pascalVisitor.prototype.visitTypeDefinitionPart = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#typeDefinition.
-pascalVisitor.prototype.visitTypeDefinition = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#functionType.
-pascalVisitor.prototype.visitFunctionType = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#procedureType.
-pascalVisitor.prototype.visitProcedureType = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -182,12 +152,6 @@ pascalVisitor.prototype.visitIndexType = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#componentType.
 pascalVisitor.prototype.visitComponentType = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#baseType.
-pascalVisitor.prototype.visitBaseType = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -266,12 +230,6 @@ pascalVisitor.prototype.visitResultType = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#statement.
 pascalVisitor.prototype.visitStatement = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#unlabelledStatement.
-pascalVisitor.prototype.visitUnlabelledStatement = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -410,12 +368,6 @@ pascalVisitor.prototype.visitParameterwidth = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#emptyStatement.
 pascalVisitor.prototype.visitEmptyStatement = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#empty.
-pascalVisitor.prototype.visitEmpty = function(ctx) {
   return this.visitChildren(ctx);
 };
 
