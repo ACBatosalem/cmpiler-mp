@@ -42,11 +42,7 @@ grammar pascal;
     ;*/
 
 program
-   : programHeading block DOT
-   ;
-
-programHeading
-   : PROGRAM identifier (LP identifierList RP)? SEMI
+   : PROGRAM identifier (LP identifierList RP)? SEMI block DOT
    ;
 
 identifier
@@ -58,28 +54,20 @@ block
    ;
 
 constantDefinitionPart
-   : CONST (constantDefinition SEMI) +
-   ;
-
-constantDefinition
-   : identifier EQUAL constant
+   : CONST (identifier EQUAL constant SEMI) +
    ;
 
 constant
    : unsignedNumber
    | sign unsignedNumber
-   | identifier
-   | sign identifier
    | string
    | character
+   | identifier
+   | sign identifier
    | bool
    ;
 
 unsignedNumber
-   : unsignedInteger
-   ;
-
-unsignedInteger
    : NUMBER
    ;
 
@@ -100,22 +88,6 @@ string
 
 character
    : CHAR_LITERAL
-   ;
-
-typeDefinitionPart
-   : TYPE (typeDefinition SEMI) +
-   ;
-
-typeDefinition
-   : identifier EQUAL (type | functionType | procedureType)
-   ;
-
-functionType
-   : FUNCTION (formalParameterList)? COLON resultType
-   ;
-
-procedureType
-   : PROCEDURE (formalParameterList)?
    ;
 
 type
@@ -172,9 +144,6 @@ componentType
    : type
    ;
 
-baseType
-   : simpleType
-   ;
 
 variableDeclarationPart
    : VAR variableDeclaration (SEMI variableDeclaration)* SEMI
@@ -229,11 +198,7 @@ resultType
    ;
 
 statement
-   :unlabelledStatement
-   ;
-
-unlabelledStatement
-   : simpleStatement
+   :simpleStatement
    | structuredStatement
    ;
 
@@ -353,10 +318,6 @@ emptyStatement
    :
    ;
 
-empty
-   :
-   /* empty */
-   ;
 
 structuredStatement
    : compoundStatement

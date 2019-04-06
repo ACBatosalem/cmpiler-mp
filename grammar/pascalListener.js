@@ -416,6 +416,51 @@ pascalListener.prototype.exitSimpleStatement = function(ctx) {
 };
 
 
+// Enter a parse tree produced by pascalParser#ioStatement.
+pascalListener.prototype.enterIoStatement = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#ioStatement.
+pascalListener.prototype.exitIoStatement = function(ctx) {
+};
+
+
+// Enter a parse tree produced by pascalParser#readln.
+pascalListener.prototype.enterReadln = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#readln.
+pascalListener.prototype.exitReadln = function(ctx) {
+};
+
+
+// Enter a parse tree produced by pascalParser#writeln.
+pascalListener.prototype.enterWriteln = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#writeln.
+pascalListener.prototype.exitWriteln = function(ctx) {
+};
+
+
+// Enter a parse tree produced by pascalParser#write.
+pascalListener.prototype.enterWrite = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#write.
+pascalListener.prototype.exitWrite = function(ctx) {
+};
+
+
+// Enter a parse tree produced by pascalParser#outputList.
+pascalListener.prototype.enterOutputList = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#outputList.
+pascalListener.prototype.exitOutputList = function(ctx) {
+};
+
+
 // Enter a parse tree produced by pascalParser#assignmentStatement.
 pascalListener.prototype.enterAssignmentStatement = function(ctx) {
 };

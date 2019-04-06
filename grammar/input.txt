@@ -1,5 +1,6 @@
 program MAIN;
 var X, Y, Z: string;
+var foo : array [ 'a'..'f' ] of Boolean;  
 BEGIN
 readln(x,y,z);
 writeln('LUH',-y,false,-1,9,'x')
