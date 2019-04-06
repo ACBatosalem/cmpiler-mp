@@ -1,6 +1,7 @@
 var antlr4 = require('antlr4/index.js');
 var PascalLexer = require("./pascalLexer.js");
 var PascalParser = require("./pascalParser.js");
+var PascalErrorListener = require('./pascalErrorListener.js').PascalErrorListener;
 //var PascalListenerImpl = require("./pascalListenerImpl.js");
 
 var main = function(input) {
@@ -8,12 +9,12 @@ var main = function(input) {
     var lexer = new PascalLexer.pascalLexer(chars);
     var tokens  = new antlr4.CommonTokenStream(lexer);
     var parser = new PascalParser.pascalParser(tokens);
-    //var errorListener = new CalculatorErrorListener();
+    var errorListener = new PascalErrorListener();
 
-   /* parser.removeErrorListeners();
+    parser.removeErrorListeners();
     lexer.removeErrorListeners();
     parser.addErrorListener(errorListener);
-    lexer.addErrorListener(errorListener);*/
+    lexer.addErrorListener(errorListener);
 
     parser.buildParseTrees = true;
     var tree = parser.program();
@@ -31,4 +32,4 @@ var main = function(input) {
     return result;*/
 }
 
-main('BEGIN \n number := 2; \n a := number; \n b := 10 * a + 10 * number / 4; \n c := a - - b; \n x := 11 \n END.')
+main('PROGRAM test;\nvar X, Y, Z: integer;\nBEGIN\nx := 1\nEND.')

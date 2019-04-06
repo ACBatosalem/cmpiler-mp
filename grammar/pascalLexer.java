@@ -1,4 +1,4 @@
-// Generated from pascal.g4 by ANTLR 4.7.2
+// Generated from pascal.g4 by ANTLR 4.7.1
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;
@@ -10,7 +10,7 @@ import org.antlr.v4.runtime.misc.*;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class pascalLexer extends Lexer {
-	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -32,45 +32,36 @@ public class pascalLexer extends Lexer {
 		"DEFAULT_MODE"
 	};
 
-	private static String[] makeRuleNames() {
-		return new String[] {
-			"A", "B", "C", "D", "E", "F", "G", "H", "I", "L", "M", "N", "O", "P", 
-			"R", "S", "T", "U", "V", "W", "X", "Y", "AND", "ARRAY", "BEGIN", "BOOLEAN", 
-			"CASE", "CHAR", "CONST", "DIV", "DO", "ELSE", "END", "FOR", "FUNCTION", 
-			"IF", "IN", "INTEGER", "LABEL", "MOD", "NOT", "OF", "OR", "PROCEDURE", 
-			"PROGRAM", "SET", "THEN", "TO", "TYPE", "VAR", "WHILE", "ADD", "SUB", 
-			"MULT", "SEMI", "ASSIGN", "COMMA", "COLON", "EQUAL", "NOT_EQUAL", "LT", 
-			"LE", "GE", "GT", "LP", "RP", "AT", "LBRACK", "LBRACK2", "RBRACK", "RBRACK2", 
-			"DOT", "DOTDOT", "STRING", "TRUE", "FALSE", "WHITESPACE", "TAB", "NL", 
-			"COMMENT_1", "COMMENT_2", "NUMBER", "ID", "CHAR_LITERAL", "STRING_LITERAL"
-		};
-	}
-	public static final String[] ruleNames = makeRuleNames();
+	public static final String[] ruleNames = {
+		"A", "B", "C", "D", "E", "F", "G", "H", "I", "L", "M", "N", "O", "P", 
+		"R", "S", "T", "U", "V", "W", "X", "Y", "AND", "ARRAY", "BEGIN", "BOOLEAN", 
+		"CASE", "CHAR", "CONST", "DIV", "DO", "ELSE", "END", "FOR", "FUNCTION", 
+		"IF", "IN", "INTEGER", "LABEL", "MOD", "NOT", "OF", "OR", "PROCEDURE", 
+		"PROGRAM", "SET", "THEN", "TO", "TYPE", "VAR", "WHILE", "ADD", "SUB", 
+		"MULT", "SEMI", "ASSIGN", "COMMA", "COLON", "EQUAL", "NOT_EQUAL", "LT", 
+		"LE", "GE", "GT", "LP", "RP", "AT", "LBRACK", "LBRACK2", "RBRACK", "RBRACK2", 
+		"DOT", "DOTDOT", "STRING", "TRUE", "FALSE", "WHITESPACE", "TAB", "NL", 
+		"COMMENT_1", "COMMENT_2", "NUMBER", "ID", "CHAR_LITERAL", "STRING_LITERAL"
+	};
 
-	private static String[] makeLiteralNames() {
-		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, "'+'", "'-'", "'*'", "';'", "':='", 
-			"','", "':'", "'='", "'<>'", "'<'", "'<='", "'>='", "'>'", "'('", "')'", 
-			"'@'", "'['", "'(.'", "']'", "'.)'", "'.'", "'..'", null, null, null, 
-			"' '", "'\t'"
-		};
-	}
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
-		return new String[] {
-			null, "AND", "ARRAY", "BEGIN", "BOOLEAN", "CASE", "CHAR", "CONST", "DIV", 
-			"DO", "ELSE", "END", "FOR", "FUNCTION", "IF", "IN", "INTEGER", "LABEL", 
-			"MOD", "NOT", "OF", "OR", "PROCEDURE", "PROGRAM", "SET", "THEN", "TO", 
-			"TYPE", "VAR", "WHILE", "ADD", "SUB", "MULT", "SEMI", "ASSIGN", "COMMA", 
-			"COLON", "EQUAL", "NOT_EQUAL", "LT", "LE", "GE", "GT", "LP", "RP", "AT", 
-			"LBRACK", "LBRACK2", "RBRACK", "RBRACK2", "DOT", "DOTDOT", "STRING", 
-			"TRUE", "FALSE", "WHITESPACE", "TAB", "NL", "COMMENT_1", "COMMENT_2", 
-			"NUMBER", "ID", "CHAR_LITERAL", "STRING_LITERAL"
-		};
-	}
-	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
+	private static final String[] _LITERAL_NAMES = {
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, "'+'", "'-'", "'*'", "';'", "':='", 
+		"','", "':'", "'='", "'<>'", "'<'", "'<='", "'>='", "'>'", "'('", "')'", 
+		"'@'", "'['", "'(.'", "']'", "'.)'", "'.'", "'..'", null, null, null, 
+		"' '", "'\t'"
+	};
+	private static final String[] _SYMBOLIC_NAMES = {
+		null, "AND", "ARRAY", "BEGIN", "BOOLEAN", "CASE", "CHAR", "CONST", "DIV", 
+		"DO", "ELSE", "END", "FOR", "FUNCTION", "IF", "IN", "INTEGER", "LABEL", 
+		"MOD", "NOT", "OF", "OR", "PROCEDURE", "PROGRAM", "SET", "THEN", "TO", 
+		"TYPE", "VAR", "WHILE", "ADD", "SUB", "MULT", "SEMI", "ASSIGN", "COMMA", 
+		"COLON", "EQUAL", "NOT_EQUAL", "LT", "LE", "GE", "GT", "LP", "RP", "AT", 
+		"LBRACK", "LBRACK2", "RBRACK", "RBRACK2", "DOT", "DOTDOT", "STRING", "TRUE", 
+		"FALSE", "WHITESPACE", "TAB", "NL", "COMMENT_1", "COMMENT_2", "NUMBER", 
+		"ID", "CHAR_LITERAL", "STRING_LITERAL"
+	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**

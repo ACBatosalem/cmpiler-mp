@@ -1,4 +1,4 @@
-// Generated from pascal.g4 by ANTLR 4.7.2
+// Generated from pascal.g4 by ANTLR 4.7.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
 public class pascalParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.7.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.7.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
@@ -48,53 +48,43 @@ public class pascalParser extends Parser {
 		RULE_compoundStatement = 64, RULE_statements = 65, RULE_conditionalStatement = 66, 
 		RULE_ifStatement = 67, RULE_repetetiveStatement = 68, RULE_forStatement = 69, 
 		RULE_forList = 70, RULE_initialValue = 71, RULE_finalValue = 72;
-	private static String[] makeRuleNames() {
-		return new String[] {
-			"program", "programHeading", "identifier", "block", "constantDefinitionPart", 
-			"constantDefinition", "constant", "unsignedNumber", "unsignedInteger", 
-			"sign", "bool", "string", "character", "typeDefinitionPart", "typeDefinition", 
-			"functionType", "procedureType", "type", "simpleType", "scalarType", 
-			"subrangeType", "typeIdentifier", "structuredType", "unpackedStructuredType", 
-			"stringtype", "arrayType", "typeList", "indexType", "componentType", 
-			"baseType", "variableDeclarationPart", "variableDeclaration", "procedureAndFunctionDeclarationPart", 
-			"procedureOrFunctionDeclaration", "procedureDeclaration", "formalParameterList", 
-			"formalParameterSection", "parameterGroup", "identifierList", "constList", 
-			"functionDeclaration", "resultType", "statement", "unlabelledStatement", 
-			"simpleStatement", "assignmentStatement", "variable", "expression", "relationaloperator", 
-			"simpleExpression", "additiveoperator", "term", "multiplicativeoperator", 
-			"signedFactor", "factor", "unsignedConstant", "functionDesignator", "parameterList", 
-			"procedureStatement", "actualParameter", "parameterwidth", "emptyStatement", 
-			"empty", "structuredStatement", "compoundStatement", "statements", "conditionalStatement", 
-			"ifStatement", "repetetiveStatement", "forStatement", "forList", "initialValue", 
-			"finalValue"
-		};
-	}
-	public static final String[] ruleNames = makeRuleNames();
+	public static final String[] ruleNames = {
+		"program", "programHeading", "identifier", "block", "constantDefinitionPart", 
+		"constantDefinition", "constant", "unsignedNumber", "unsignedInteger", 
+		"sign", "bool", "string", "character", "typeDefinitionPart", "typeDefinition", 
+		"functionType", "procedureType", "type", "simpleType", "scalarType", "subrangeType", 
+		"typeIdentifier", "structuredType", "unpackedStructuredType", "stringtype", 
+		"arrayType", "typeList", "indexType", "componentType", "baseType", "variableDeclarationPart", 
+		"variableDeclaration", "procedureAndFunctionDeclarationPart", "procedureOrFunctionDeclaration", 
+		"procedureDeclaration", "formalParameterList", "formalParameterSection", 
+		"parameterGroup", "identifierList", "constList", "functionDeclaration", 
+		"resultType", "statement", "unlabelledStatement", "simpleStatement", "assignmentStatement", 
+		"variable", "expression", "relationaloperator", "simpleExpression", "additiveoperator", 
+		"term", "multiplicativeoperator", "signedFactor", "factor", "unsignedConstant", 
+		"functionDesignator", "parameterList", "procedureStatement", "actualParameter", 
+		"parameterwidth", "emptyStatement", "empty", "structuredStatement", "compoundStatement", 
+		"statements", "conditionalStatement", "ifStatement", "repetetiveStatement", 
+		"forStatement", "forList", "initialValue", "finalValue"
+	};
 
-	private static String[] makeLiteralNames() {
-		return new String[] {
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, null, null, null, null, null, null, 
-			null, null, null, null, null, null, "'+'", "'-'", "'*'", "';'", "':='", 
-			"','", "':'", "'='", "'<>'", "'<'", "'<='", "'>='", "'>'", "'('", "')'", 
-			"'@'", "'['", "'(.'", "']'", "'.)'", "'.'", "'..'", null, null, null, 
-			"' '", "'\t'"
-		};
-	}
-	private static final String[] _LITERAL_NAMES = makeLiteralNames();
-	private static String[] makeSymbolicNames() {
-		return new String[] {
-			null, "AND", "ARRAY", "BEGIN", "BOOLEAN", "CASE", "CHAR", "CONST", "DIV", 
-			"DO", "ELSE", "END", "FOR", "FUNCTION", "IF", "IN", "INTEGER", "LABEL", 
-			"MOD", "NOT", "OF", "OR", "PROCEDURE", "PROGRAM", "SET", "THEN", "TO", 
-			"TYPE", "VAR", "WHILE", "ADD", "SUB", "MULT", "SEMI", "ASSIGN", "COMMA", 
-			"COLON", "EQUAL", "NOT_EQUAL", "LT", "LE", "GE", "GT", "LP", "RP", "AT", 
-			"LBRACK", "LBRACK2", "RBRACK", "RBRACK2", "DOT", "DOTDOT", "STRING", 
-			"TRUE", "FALSE", "WHITESPACE", "TAB", "NL", "COMMENT_1", "COMMENT_2", 
-			"NUMBER", "ID", "CHAR_LITERAL", "STRING_LITERAL"
-		};
-	}
-	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
+	private static final String[] _LITERAL_NAMES = {
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, null, null, null, null, null, null, 
+		null, null, null, null, null, null, "'+'", "'-'", "'*'", "';'", "':='", 
+		"','", "':'", "'='", "'<>'", "'<'", "'<='", "'>='", "'>'", "'('", "')'", 
+		"'@'", "'['", "'(.'", "']'", "'.)'", "'.'", "'..'", null, null, null, 
+		"' '", "'\t'"
+	};
+	private static final String[] _SYMBOLIC_NAMES = {
+		null, "AND", "ARRAY", "BEGIN", "BOOLEAN", "CASE", "CHAR", "CONST", "DIV", 
+		"DO", "ELSE", "END", "FOR", "FUNCTION", "IF", "IN", "INTEGER", "LABEL", 
+		"MOD", "NOT", "OF", "OR", "PROCEDURE", "PROGRAM", "SET", "THEN", "TO", 
+		"TYPE", "VAR", "WHILE", "ADD", "SUB", "MULT", "SEMI", "ASSIGN", "COMMA", 
+		"COLON", "EQUAL", "NOT_EQUAL", "LT", "LE", "GE", "GT", "LP", "RP", "AT", 
+		"LBRACK", "LBRACK2", "RBRACK", "RBRACK2", "DOT", "DOTDOT", "STRING", "TRUE", 
+		"FALSE", "WHITESPACE", "TAB", "NL", "COMMENT_1", "COMMENT_2", "NUMBER", 
+		"ID", "CHAR_LITERAL", "STRING_LITERAL"
+	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
 	/**
@@ -144,7 +134,6 @@ public class pascalParser extends Parser {
 		super(input);
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
-
 	public static class ProgramContext extends ParserRuleContext {
 		public ProgramHeadingContext programHeading() {
 			return getRuleContext(ProgramHeadingContext.class,0);
@@ -3720,7 +3709,6 @@ public class pascalParser extends Parser {
 	}
 
 	public static class ParameterwidthContext extends ParserRuleContext {
-		public TerminalNode COLON() { return getToken(pascalParser.COLON, 0); }
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
 		}

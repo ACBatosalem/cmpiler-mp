@@ -11,10 +11,11 @@ class SymbolTable {
         this.initBuiltIn();
     }
 
-    // TODO: understand this part
     initBuiltIn() {
         this.define(TypeSymbol.create('INTEGER'));
-        this.define(TypeSymbol.create('REAL'));
+        this.define(TypeSymbol.create('CHAR'));
+        this.define(TypeSymbol.create('STRING'));
+        this.define(TypeSymbol.create('BOOLEAN'));
 
         return this;
     }
