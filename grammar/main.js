@@ -2,18 +2,19 @@ var antlr4 = require('antlr4/index.js');
 var PascalLexer = require("./pascalLexer.js");
 var PascalParser = require("./pascalParser.js");
 var PascalVisitorImpl = require("./pascalVisitorImpl.js");
+var PascalErrorListener = require('./pascalErrorListener.js').PascalErrorListener;
 
 var main = function(input) {
     var chars = new antlr4.InputStream(input);
     var lexer = new PascalLexer.pascalLexer(chars);
     var tokens  = new antlr4.CommonTokenStream(lexer);
     var parser = new PascalParser.pascalParser(tokens);
-    //var errorListener = new CalculatorErrorListener();
+    var errorListener = new PascalErrorListener();
 
-   /* parser.removeErrorListeners();
+    parser.removeErrorListeners();
     lexer.removeErrorListeners();
     parser.addErrorListener(errorListener);
-    lexer.addErrorListener(errorListener);*/
+    lexer.addErrorListener(errorListener);
 
     parser.buildParseTrees = true;
     var tree = parser.program();
