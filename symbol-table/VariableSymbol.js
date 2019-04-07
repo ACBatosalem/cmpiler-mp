@@ -19,7 +19,7 @@ class VariableSymbol extends Symbol {
         this.isConstant = isConstant;
     }
     toString() {
-      return `VariableSymbol(${this.getName()}, ${this.getType()})`;
+      return `VariableSymbol(${this.getName()}, ${this.getType()},${this.value})`;
     }
   
     /**

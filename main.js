@@ -24,8 +24,8 @@ var main = function(input) {
     //console.log(tree.toStringTree(parser.ruleNames));
 
     var printer = new PascalVisitorImpl.pascalVisitorImpl();
-    printer.visit(tree);
-    analyzer.visit(tree);
+    printer.visitProgram(tree);
+    //analyzer.visit(tree);
 
     //antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
    /* var result = printer.stack.slice(-1).pop();

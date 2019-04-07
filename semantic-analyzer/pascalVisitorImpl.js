@@ -36,18 +36,18 @@ visitor.prototype.visitCompoundStatement = function(ctx) {
 };
 
 visitor.prototype.visitType = function(ctx) {
-  console.log("type " + ctx.getText() +this.ctr)
-  this.ctr++
   return ctx.getText();
 };
 
 visitor.prototype.visitIdentifier = function(ctx) {
-  console.log("id " + ctx.getText() +this.ctr)
-  this.ctr++
   return ctx.getText();
 };
 
 visitor.prototype.visitTypeIdentifier = function(ctx) {
+  return ctx.getText();
+};
+
+visitor.prototype.visitVariable = function(ctx) {
   return ctx.getText();
 };
 
@@ -163,5 +163,72 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
   this.scope.define(varSymbol)
 };
 
+visitor.prototype.visitAssignmentStatement = function(ctx) {
+  var varName = this.visit(ctx.variable())
+  var varSymbol = this.scope.lookup(varName)
+  if(!varSymbol) {
+      throw new Error(`Variable not declared ${varName}`);
+  }
+  var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
+  var varType = varSymbol.type.name
+  //console.log(value)
+  //console.log(value.toString())
+  for(x in value) {
+    var temp = value[x]
+    if(temp.includes('\'')) {
+      if(temp.length == 3)
+        if(varType !== 'STRING' && varType !== 'CHAR')
+          throw new Error(`Data type mismatch: Can't assign ${temp} to non-char/string variable`);
+      else
+        if(varType !== 'STRING')
+          throw new Error(`Data type mismatch: Can't assign ${temp} to non-string variable`);
+    } else if(!isNaN(temp)) {
+      if(varType !== 'INTEGER')
+        throw new Error(`Data type mismatch: Can't assign ${temp} to non-int variable`);
+    } else if(temp == true || temp == false){
+      if(varType !== 'BOOLEAN')
+        throw new Error(`Data type mismatch: Can't assign ${temp} to non-boolean variable`);
+    } else {
+      var varTemp = this.scope.lookup(temp)
+      if(!varTemp)
+          throw new Error(`Variable not declared ${temp}`);
+      if(varType !== varTemp.type.name)
+      throw new Error(`Data type mismatch: ${varName} and ${temp}`);
+
+    }
+  }
+};
+
+visitor.prototype.visitSimpleExpression = function(ctx) {
+  var values = []
+  for(var i = 0; i < ctx.getChildCount(); i+=2) {
+    var temp = this.visit(ctx.getChild(i))
+    values.push(temp)
+  }
+  return values
+};
+
+visitor.prototype.visitTerm = function(ctx) {
+  var values = []
+  for(var i = 0; i < ctx.getChildCount(); i+=2) {
+    var temp = this.visit(ctx.getChild(i))
+    values.push(temp)
+  }
+  return values
+};
+
+visitor.prototype.visitAdditiveoperator = function(ctx){};
+visitor.prototype.visitMultiplicativeoperator = function(ctx){};
+
+visitor.prototype.visitSignedFactor = function(ctx){
+  return this.visit(ctx.factor())
+};
+
+visitor.prototype.visitFactor = function(ctx){
+  if(ctx.getChildCount() == 1)
+    return ctx.getText()
+  else
+    return this.visit(ctx.expression())
+};
 
 exports.pascalVisitorImpl = visitor;

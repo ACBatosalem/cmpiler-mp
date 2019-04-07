@@ -65,6 +65,15 @@ pascalListener.prototype.exitConstantDefinition = function(ctx) {
 };
 
 
+// Enter a parse tree produced by pascalParser#constantValues.
+pascalListener.prototype.enterConstantValues = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#constantValues.
+pascalListener.prototype.exitConstantValues = function(ctx) {
+};
+
+
 // Enter a parse tree produced by pascalParser#constant.
 pascalListener.prototype.enterConstant = function(ctx) {
 };
@@ -170,15 +179,6 @@ pascalListener.prototype.enterStructuredType = function(ctx) {
 
 // Exit a parse tree produced by pascalParser#structuredType.
 pascalListener.prototype.exitStructuredType = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#unpackedStructuredType.
-pascalListener.prototype.enterUnpackedStructuredType = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#unpackedStructuredType.
-pascalListener.prototype.exitUnpackedStructuredType = function(ctx) {
 };
 
 
@@ -305,15 +305,6 @@ pascalListener.prototype.enterIdentifierList = function(ctx) {
 
 // Exit a parse tree produced by pascalParser#identifierList.
 pascalListener.prototype.exitIdentifierList = function(ctx) {
-};
-
-
-// Enter a parse tree produced by pascalParser#constList.
-pascalListener.prototype.enterConstList = function(ctx) {
-};
-
-// Exit a parse tree produced by pascalParser#constList.
-pascalListener.prototype.exitConstList = function(ctx) {
 };
 
 

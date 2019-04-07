@@ -276,7 +276,7 @@ term
    ;
 
 multiplicativeoperator
-   : 
+   : MULT
    | DIV
    | MOD
    | AND

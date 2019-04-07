@@ -1,13 +1,11 @@
 program MAIN;
-var X, Y, Z: string;
-const con=3;
-cons='4';
-function oof(X:integer; var m:string):integer;
-var x:integer;
-BEGIN
-oof:=0;
-end;
-BEGIN
-readln(x,y,z);
-writeln('LUH',-y,false,-1,9,'x')
+var x:string;
+y:char;
+begin
+x := 'a';
+{x := 'a';
+x := 'sbc';
+x := false;
+x := -(x*y)+7 div 4;
+x := x+y}
 End. {MAIN}

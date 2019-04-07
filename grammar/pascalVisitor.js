@@ -48,6 +48,12 @@ pascalVisitor.prototype.visitConstantDefinition = function(ctx) {
 };
 
 
+// Visit a parse tree produced by pascalParser#constantValues.
+pascalVisitor.prototype.visitConstantValues = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by pascalParser#constant.
 pascalVisitor.prototype.visitConstant = function(ctx) {
   return this.visitChildren(ctx);
@@ -116,12 +122,6 @@ pascalVisitor.prototype.visitTypeIdentifier = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#structuredType.
 pascalVisitor.prototype.visitStructuredType = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#unpackedStructuredType.
-pascalVisitor.prototype.visitUnpackedStructuredType = function(ctx) {
   return this.visitChildren(ctx);
 };
 
@@ -206,12 +206,6 @@ pascalVisitor.prototype.visitParameterGroup = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#identifierList.
 pascalVisitor.prototype.visitIdentifierList = function(ctx) {
-  return this.visitChildren(ctx);
-};
-
-
-// Visit a parse tree produced by pascalParser#constList.
-pascalVisitor.prototype.visitConstList = function(ctx) {
   return this.visitChildren(ctx);
 };
 
