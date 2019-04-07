@@ -8,7 +8,7 @@ var grammarFileName = "pascal.g4";
 
 
 var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
-    "\u0003D\u0229\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
+    "\u0003E\u0229\u0004\u0002\t\u0002\u0004\u0003\t\u0003\u0004\u0004\t",
     "\u0004\u0004\u0005\t\u0005\u0004\u0006\t\u0006\u0004\u0007\t\u0007\u0004",
     "\b\t\b\u0004\t\t\t\u0004\n\t\n\u0004\u000b\t\u000b\u0004\f\t\f\u0004",
     "\r\t\r\u0004\u000e\t\u000e\u0004\u000f\t\u000f\u0004\u0010\t\u0010\u0004",
@@ -119,7 +119,7 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0092\u008e\u0003\u0002\u0002\u0002\u0092\u0093\u0003\u0002\u0002\u0002",
     "\u0093\u0094\u0003\u0002\u0002\u0002\u0094\u0095\u0007&\u0002\u0002",
     "\u0095\u0096\u0005\u0006\u0004\u0002\u0096\u0097\u00077\u0002\u0002",
-    "\u0097\u0003\u0003\u0002\u0002\u0002\u0098\u0099\u0007B\u0002\u0002",
+    "\u0097\u0003\u0003\u0002\u0002\u0002\u0098\u0099\u0007C\u0002\u0002",
     "\u0099\u0005\u0003\u0002\u0002\u0002\u009a\u009b\u0005\b\u0005\u0002",
     "\u009b\u009c\u0005z>\u0002\u009c\u0007\u0003\u0002\u0002\u0002\u009d",
     "\u00a1\u0005\n\u0006\u0002\u009e\u00a1\u00052\u001a\u0002\u009f\u00a1",
@@ -149,11 +149,11 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0002\u0002\u00c5\u00bb\u0003\u0002\u0002\u0002\u00c5\u00be\u0003\u0002",
     "\u0002\u0002\u00c5\u00bf\u0003\u0002\u0002\u0002\u00c5\u00c0\u0003\u0002",
     "\u0002\u0002\u00c5\u00c1\u0003\u0002\u0002\u0002\u00c5\u00c4\u0003\u0002",
-    "\u0002\u0002\u00c6\u0011\u0003\u0002\u0002\u0002\u00c7\u00c8\u0007A",
+    "\u0002\u0002\u00c6\u0011\u0003\u0002\u0002\u0002\u00c7\u00c8\u0007B",
     "\u0002\u0002\u00c8\u0013\u0003\u0002\u0002\u0002\u00c9\u00ca\t\u0002",
     "\u0002\u0002\u00ca\u0015\u0003\u0002\u0002\u0002\u00cb\u00cc\t\u0003",
-    "\u0002\u0002\u00cc\u0017\u0003\u0002\u0002\u0002\u00cd\u00ce\u0007D",
-    "\u0002\u0002\u00ce\u0019\u0003\u0002\u0002\u0002\u00cf\u00d0\u0007C",
+    "\u0002\u0002\u00cc\u0017\u0003\u0002\u0002\u0002\u00cd\u00ce\u0007E",
+    "\u0002\u0002\u00ce\u0019\u0003\u0002\u0002\u0002\u00cf\u00d0\u0007D",
     "\u0002\u0002\u00d0\u001b\u0003\u0002\u0002\u0002\u00d1\u00d4\u0005\u001e",
     "\u0010\u0002\u00d2\u00d4\u0005&\u0014\u0002\u00d3\u00d1\u0003\u0002",
     "\u0002\u0002\u00d3\u00d2\u0003\u0002\u0002\u0002\u00d4\u001d\u0003\u0002",
@@ -360,7 +360,7 @@ var literalNames = [ null, null, null, null, null, null, null, null, null,
                      "';'", "':='", "','", "':'", "'='", "'<>'", "'<'", 
                      "'<='", "'>='", "'>'", "'('", "')'", "'@'", "'['", 
                      "'(.'", "']'", "'.)'", "'.'", "'..'", null, null, null, 
-                     "' '", "'\t'" ];
+                     null, null, null, "' '", "'\t'" ];
 
 var symbolicNames = [ null, "AND", "ARRAY", "BEGIN", "BOOLEAN", "CASE", 
                       "CHAR", "CONST", "DIV", "DO", "ELSE", "END", "FOR", 
@@ -371,8 +371,8 @@ var symbolicNames = [ null, "AND", "ARRAY", "BEGIN", "BOOLEAN", "CASE",
                       "COMMA", "COLON", "EQUAL", "NOT_EQUAL", "LT", "LE", 
                       "GE", "GT", "LP", "RP", "AT", "LBRACK", "LBRACK2", 
                       "RBRACK", "RBRACK2", "DOT", "DOTDOT", "STRING", "TRUE", 
-                      "FALSE", "WHITESPACE", "TAB", "NL", "COMMENT_1", "COMMENT_2", 
-                      "NUMBER", "ID", "CHAR_LITERAL", "STRING_LITERAL" ];
+                      "FALSE", "COMMENT_1", "COMMENT_2", "COMMENT_3", "WHITESPACE", 
+                      "TAB", "NL", "NUMBER", "ID", "CHAR_LITERAL", "STRING_LITERAL" ];
 
 var ruleNames =  [ "program", "identifier", "block", "declarations", "constantDefinitionPart", 
                    "constantDefinition", "constantValues", "constant", "unsignedNumber", 
@@ -470,15 +470,16 @@ pascalParser.DOTDOT = 54;
 pascalParser.STRING = 55;
 pascalParser.TRUE = 56;
 pascalParser.FALSE = 57;
-pascalParser.WHITESPACE = 58;
-pascalParser.TAB = 59;
-pascalParser.NL = 60;
-pascalParser.COMMENT_1 = 61;
-pascalParser.COMMENT_2 = 62;
-pascalParser.NUMBER = 63;
-pascalParser.ID = 64;
-pascalParser.CHAR_LITERAL = 65;
-pascalParser.STRING_LITERAL = 66;
+pascalParser.COMMENT_1 = 58;
+pascalParser.COMMENT_2 = 59;
+pascalParser.COMMENT_3 = 60;
+pascalParser.WHITESPACE = 61;
+pascalParser.TAB = 62;
+pascalParser.NL = 63;
+pascalParser.NUMBER = 64;
+pascalParser.ID = 65;
+pascalParser.CHAR_LITERAL = 66;
+pascalParser.STRING_LITERAL = 67;
 
 pascalParser.RULE_program = 0;
 pascalParser.RULE_identifier = 1;
@@ -4241,7 +4242,7 @@ pascalParser.prototype.writeln = function() {
             this.state = 366;
             this._errHandler.sync(this);
             _la = this._input.LA(1);
-            while(((((_la - 33)) & ~0x1f) == 0 && ((1 << (_la - 33)) & ((1 << (pascalParser.ADD - 33)) | (1 << (pascalParser.SUB - 33)) | (1 << (pascalParser.TRUE - 33)) | (1 << (pascalParser.FALSE - 33)) | (1 << (pascalParser.NUMBER - 33)) | (1 << (pascalParser.ID - 33)))) !== 0) || _la===pascalParser.CHAR_LITERAL || _la===pascalParser.STRING_LITERAL) {
+            while(((((_la - 33)) & ~0x1f) == 0 && ((1 << (_la - 33)) & ((1 << (pascalParser.ADD - 33)) | (1 << (pascalParser.SUB - 33)) | (1 << (pascalParser.TRUE - 33)) | (1 << (pascalParser.FALSE - 33)) | (1 << (pascalParser.NUMBER - 33)))) !== 0) || ((((_la - 65)) & ~0x1f) == 0 && ((1 << (_la - 65)) & ((1 << (pascalParser.ID - 65)) | (1 << (pascalParser.CHAR_LITERAL - 65)) | (1 << (pascalParser.STRING_LITERAL - 65)))) !== 0)) {
                 this.state = 363;
                 this.outputList();
                 this.state = 368;

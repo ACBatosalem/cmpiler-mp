@@ -23,8 +23,8 @@ public class pascalParser extends Parser {
 		SUB=34, MULT=35, SEMI=36, ASSIGN=37, COMMA=38, COLON=39, EQUAL=40, NOT_EQUAL=41, 
 		LT=42, LE=43, GE=44, GT=45, LP=46, RP=47, AT=48, LBRACK=49, LBRACK2=50, 
 		RBRACK=51, RBRACK2=52, DOT=53, DOTDOT=54, STRING=55, TRUE=56, FALSE=57, 
-		WHITESPACE=58, TAB=59, NL=60, COMMENT_1=61, COMMENT_2=62, NUMBER=63, ID=64, 
-		CHAR_LITERAL=65, STRING_LITERAL=66;
+		COMMENT_1=58, COMMENT_2=59, COMMENT_3=60, WHITESPACE=61, TAB=62, NL=63, 
+		NUMBER=64, ID=65, CHAR_LITERAL=66, STRING_LITERAL=67;
 	public static final int
 		RULE_program = 0, RULE_identifier = 1, RULE_block = 2, RULE_declarations = 3, 
 		RULE_constantDefinitionPart = 4, RULE_constantDefinition = 5, RULE_constantValues = 6, 
@@ -73,7 +73,7 @@ public class pascalParser extends Parser {
 		null, null, null, null, null, null, null, null, null, "'+'", "'-'", "'*'", 
 		"';'", "':='", "','", "':'", "'='", "'<>'", "'<'", "'<='", "'>='", "'>'", 
 		"'('", "')'", "'@'", "'['", "'(.'", "']'", "'.)'", "'.'", "'..'", null, 
-		null, null, "' '", "'\t'"
+		null, null, null, null, null, "' '", "'\t'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, "AND", "ARRAY", "BEGIN", "BOOLEAN", "CASE", "CHAR", "CONST", "DIV", 
@@ -82,8 +82,9 @@ public class pascalParser extends Parser {
 		"TO", "TYPE", "VAR", "WHILE", "WRITE", "WRITELN", "ADD", "SUB", "MULT", 
 		"SEMI", "ASSIGN", "COMMA", "COLON", "EQUAL", "NOT_EQUAL", "LT", "LE", 
 		"GE", "GT", "LP", "RP", "AT", "LBRACK", "LBRACK2", "RBRACK", "RBRACK2", 
-		"DOT", "DOTDOT", "STRING", "TRUE", "FALSE", "WHITESPACE", "TAB", "NL", 
-		"COMMENT_1", "COMMENT_2", "NUMBER", "ID", "CHAR_LITERAL", "STRING_LITERAL"
+		"DOT", "DOTDOT", "STRING", "TRUE", "FALSE", "COMMENT_1", "COMMENT_2", 
+		"COMMENT_3", "WHITESPACE", "TAB", "NL", "NUMBER", "ID", "CHAR_LITERAL", 
+		"STRING_LITERAL"
 	};
 	public static final Vocabulary VOCABULARY = new VocabularyImpl(_LITERAL_NAMES, _SYMBOLIC_NAMES);
 
@@ -3653,7 +3654,7 @@ public class pascalParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3D\u0229\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3E\u0229\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -3712,7 +3713,7 @@ public class pascalParser extends Parser {
 		"\u008d\7\31\2\2\u008d\u0092\5\4\3\2\u008e\u008f\7\60\2\2\u008f\u0090\5"+
 		"B\"\2\u0090\u0091\7\61\2\2\u0091\u0093\3\2\2\2\u0092\u008e\3\2\2\2\u0092"+
 		"\u0093\3\2\2\2\u0093\u0094\3\2\2\2\u0094\u0095\7&\2\2\u0095\u0096\5\6"+
-		"\4\2\u0096\u0097\7\67\2\2\u0097\3\3\2\2\2\u0098\u0099\7B\2\2\u0099\5\3"+
+		"\4\2\u0096\u0097\7\67\2\2\u0097\3\3\2\2\2\u0098\u0099\7C\2\2\u0099\5\3"+
 		"\2\2\2\u009a\u009b\5\b\5\2\u009b\u009c\5z>\2\u009c\7\3\2\2\2\u009d\u00a1"+
 		"\5\n\6\2\u009e\u00a1\5\62\32\2\u009f\u00a1\5\66\34\2\u00a0\u009d\3\2\2"+
 		"\2\u00a0\u009e\3\2\2\2\u00a0\u009f\3\2\2\2\u00a1\u00a4\3\2\2\2\u00a2\u00a0"+
@@ -3729,10 +3730,10 @@ public class pascalParser extends Parser {
 		"\32\16\2\u00c0\u00c6\5\4\3\2\u00c1\u00c2\5\24\13\2\u00c2\u00c3\5\4\3\2"+
 		"\u00c3\u00c6\3\2\2\2\u00c4\u00c6\5\26\f\2\u00c5\u00ba\3\2\2\2\u00c5\u00bb"+
 		"\3\2\2\2\u00c5\u00be\3\2\2\2\u00c5\u00bf\3\2\2\2\u00c5\u00c0\3\2\2\2\u00c5"+
-		"\u00c1\3\2\2\2\u00c5\u00c4\3\2\2\2\u00c6\21\3\2\2\2\u00c7\u00c8\7A\2\2"+
+		"\u00c1\3\2\2\2\u00c5\u00c4\3\2\2\2\u00c6\21\3\2\2\2\u00c7\u00c8\7B\2\2"+
 		"\u00c8\23\3\2\2\2\u00c9\u00ca\t\2\2\2\u00ca\25\3\2\2\2\u00cb\u00cc\t\3"+
-		"\2\2\u00cc\27\3\2\2\2\u00cd\u00ce\7D\2\2\u00ce\31\3\2\2\2\u00cf\u00d0"+
-		"\7C\2\2\u00d0\33\3\2\2\2\u00d1\u00d4\5\36\20\2\u00d2\u00d4\5&\24\2\u00d3"+
+		"\2\2\u00cc\27\3\2\2\2\u00cd\u00ce\7E\2\2\u00ce\31\3\2\2\2\u00cf\u00d0"+
+		"\7D\2\2\u00d0\33\3\2\2\2\u00d1\u00d4\5\36\20\2\u00d2\u00d4\5&\24\2\u00d3"+
 		"\u00d1\3\2\2\2\u00d3\u00d2\3\2\2\2\u00d4\35\3\2\2\2\u00d5\u00da\5 \21"+
 		"\2\u00d6\u00da\5\"\22\2\u00d7\u00da\5$\23\2\u00d8\u00da\5(\25\2\u00d9"+
 		"\u00d5\3\2\2\2\u00d9\u00d6\3\2\2\2\u00d9\u00d7\3\2\2\2\u00d9\u00d8\3\2"+

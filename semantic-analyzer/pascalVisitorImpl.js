@@ -5,6 +5,53 @@ const VariableSymbol = require('../symbol-table/VariableSymbol');
 const ProcedureSymbol = require('../symbol-table/ProcedureSymbol');
 const FunctionSymbol = require('../symbol-table/FunctionSymbol');
 
+var KEYWORDS = [
+	'AND',
+	'ARRAY',
+	'BEGIN',
+	'BOOLEAN',
+	'CASE',
+	'CHAR',
+	'CHR',
+	'CONST',
+	'DIV',
+	'DO',
+	'DOWNTO',
+	'ELSE',
+	'END',
+	'FILE',
+	'FOR',
+	'FUNCTION',
+	'GOTO',
+	'IF',
+	'IN',
+	'INTEGER',
+	'LABEL',
+	'MOD',
+	'NIL',
+	'NOT',
+	'OF',
+	'OR',
+	'PACKED',
+	'PROCEDURE',
+	'PROGRAM',
+	'READLIN',
+	'REAL',
+	'RECORD',
+	'REPEAT',
+	'SET',
+	'STRING',
+	'THEN',
+	'TO',
+	'TYPE',
+	'UNTIL',
+	'VAR',
+	'WHILE',
+	'WITH',
+	'WRITE',
+	'WRITELN'
+];
+
 var visitor = function() {
     PascalVisitor.pascalVisitor.call(this); // chain the constructor
     this.ctr = 0;
@@ -76,11 +123,19 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
 
 visitor.prototype.visitIdentifierList = function(ctx) {
   var variables =[];
+  var isReserved = false;
   for(var i = 0; i < ctx.getChildCount(); i+=2) {
     var temp = ctx.getChild(i).getText()
+
+    isReserved = KEYWORDS.includes(temp.toString());
+    console.log("HELLO THERE TEMP: " + temp + " " + isReserved);
+
     //insert checking if reserved word
-    if(temp != undefined)
+    if(temp != undefined && !isReserved)
       variables.push(temp)
+
+    if(isReserved)
+      console.log("ERROR: " + temp + " is a reserved keyword");
   }
   
   return variables;
