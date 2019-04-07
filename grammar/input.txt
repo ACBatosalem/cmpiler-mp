@@ -1,8 +1,12 @@
 program MAIN;
-var x:string;
-y:char;
+var y:char;
+x:integer;
+function oof(x:integer):char;
 begin
-x := 'a';
+oof:=0
+end;
+begin
+y := 'a';
 {x := 'a';
 x := 'sbc';
 x := false;

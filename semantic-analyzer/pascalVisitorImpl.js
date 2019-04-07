@@ -105,8 +105,8 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
 
 visitor.prototype.visitFunctionDeclaration = function(ctx) {
   var funcName = this.visit(ctx.identifier())
-  var funcReturn = this.visit(ctx.resultType())
-  var funcSymbol = new FunctionSymbol(funcName, funcReturn)
+  var funcReturn = this.visit(ctx.resultType().typeIdentifier())
+  var funcSymbol = new FunctionSymbol(funcName, this.scope.lookup(funcReturn.toUpperCase()))
 
   this.scope.define(funcSymbol)
   this.scope = new SymbolTable(funcName, 
@@ -166,35 +166,65 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
 visitor.prototype.visitAssignmentStatement = function(ctx) {
   var varName = this.visit(ctx.variable())
   var varSymbol = this.scope.lookup(varName)
+  var funcName = this.scope.scopeName
+  console.log(varSymbol)
+  console.log(this.scope.scopeName)
   if(!varSymbol) {
       throw new Error(`Variable not declared ${varName}`);
   }
   var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
-  var varType = varSymbol.type.name
-  //console.log(value)
-  //console.log(value.toString())
+  var isReturn = false
+  var error = false
+  var varType
+  var errorMessage
+  if(this.scope.scopeName===varSymbol.name) {
+    varType = varSymbol.returnType.name
+    isReturn = true
+    //errorMessage = `Return type mismatch: function ${this.scope.scopename}`
+  } else
+    var varType = varSymbol.type.name
+
   for(x in value) {
     var temp = value[x]
     if(temp.includes('\'')) {
-      if(temp.length == 3)
-        if(varType !== 'STRING' && varType !== 'CHAR')
-          throw new Error(`Data type mismatch: Can't assign ${temp} to non-char/string variable`);
-      else
-        if(varType !== 'STRING')
-          throw new Error(`Data type mismatch: Can't assign ${temp} to non-string variable`);
+        console.log(temp.length)
+      if(temp.length == 3) {
+        if(varType !== 'STRING' && varType !== 'CHAR') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable`
+        }
+      } else {
+        if(varType !== 'STRING') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable`
+        }
+      }
     } else if(!isNaN(temp)) {
-      if(varType !== 'INTEGER')
-        throw new Error(`Data type mismatch: Can't assign ${temp} to non-int variable`);
+      if(varType !== 'INTEGER') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable`
+      }
     } else if(temp == true || temp == false){
-      if(varType !== 'BOOLEAN')
-        throw new Error(`Data type mismatch: Can't assign ${temp} to non-boolean variable`);
+      if(varType !== 'BOOLEAN') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable`
+      }
     } else {
       var varTemp = this.scope.lookup(temp)
-      if(!varTemp)
-          throw new Error(`Variable not declared ${temp}`);
-      if(varType !== varTemp.type.name)
-      throw new Error(`Data type mismatch: ${varName} and ${temp}`);
+      if(!varTemp) {
+        error = true
+        errorMessage = `Variable not declared ${temp}`
+      }
+      if(varType !== varTemp.type.name){
+        error = true
+        errorMessage = `Data type mismatch: ${varName} and ${temp}`
+      }
 
+    }
+    if(error) {
+        if(isReturn)
+            throw new Error(`Return type mismatch: function ${funcName}`)
+        throw new Error(errorMessage)
     }
   }
 };
