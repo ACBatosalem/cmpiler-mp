@@ -4,6 +4,7 @@ var PascalParser = require("./grammar/pascalParser.js");
 var PascalVisitorImpl = require("./semantic-analyzer/pascalVisitorImpl.js");
 var PascalErrorListener = require('./grammar/pascalErrorListener.js').PascalErrorListener;
 var SemanticAnalyzer = require('./semantic-analyzer/SemanticAnalyzer.js');
+var fs = require("fs")
 
 var main = function(input) {
     var chars = new antlr4.InputStream(input);
@@ -37,4 +38,6 @@ var main = function(input) {
     return result;*/
 }
 
-main('program MAIN; var X, Y, Z: string;procedure oof;var x:integer;; BEGIN End. {MAIN}')
+var input = fs.readFileSync("grammar/input.txt").toString()
+
+main(input)

@@ -1,8 +1,11 @@
 program MAIN;
 var X, Y, Z: string;
-procedure oof;
-var x:int;
+const con=3;
+cons='4';
+function oof(X:integer; var m:string):integer;
+var x:integer;
 BEGIN
+oof:=0;
 end;
 BEGIN
 readln(x,y,z);

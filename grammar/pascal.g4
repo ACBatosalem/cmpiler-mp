@@ -63,7 +63,15 @@ constantDefinitionPart
    ;
 
 constantDefinition
-   :identifier EQUAL constant
+   :identifier EQUAL constantValues
+   ;
+
+constantValues
+   : unsignedNumber
+   | sign unsignedNumber
+   | string
+   | character
+   | bool
    ;
 
 constant
@@ -188,10 +196,6 @@ parameterGroup
 
 identifierList
    : identifier (COMMA identifier)*
-   ;
-
-constList
-   : constant (COMMA constant)*
    ;
 
 functionDeclaration

@@ -13,8 +13,9 @@ class VariableSymbol extends Symbol {
      *
      * @returns {String}
      */
-    constructor(name, type, isConstant = false) {
+    constructor(name, type, isConstant = false, value=null) {
         super(name,type);
+        this.value = value
         this.isConstant = isConstant;
     }
     toString() {
@@ -29,8 +30,8 @@ class VariableSymbol extends Symbol {
      * @param {TypeSymbol} type
      * @returns {VariableSymbol}
      */
-    static create(name, type, isConstant) {
-      return new this(name, type, isConstant);
+    static create(name, type, isConstant, value) {
+      return new this(name, type, isConstant, value);
     }
   }
   
