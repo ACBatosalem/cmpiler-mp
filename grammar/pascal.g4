@@ -458,6 +458,7 @@ TAB: '\t' -> skip;
 NL : '\r'? '\n' -> skip;
 COMMENT_1: '(*' .*? '*)' -> skip;
 COMMENT_2: '{' .*? '}' -> skip;
+COMMENT_3: '//' .*? '\n' -> skip;
 NUMBER     : [0-9]+ ;
 ID: [a-zA-Z_][a-zA-Z_0-9]*;
 CHAR_LITERAL
@@ -466,8 +467,5 @@ CHAR_LITERAL
 STRING_LITERAL
    : '\'' ('\'\'' | ~ ('\''))* '\''
    ;
-
-
-
 
 

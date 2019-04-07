@@ -1,4 +1,4 @@
-var antlr4 = require('antlr4/index.js');
+var antlr4 = require('./grammar/node_modules/antlr4/index');
 var PascalLexer = require("./grammar/pascalLexer.js");
 var PascalParser = require("./grammar/pascalParser.js");
 var PascalVisitorImpl = require("./semantic-analyzer/pascalVisitorImpl.js");

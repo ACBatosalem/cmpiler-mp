@@ -4,6 +4,53 @@ const Pascal = require('./pascalLexer');
 const PascalParser = require('./pascalParser');
 const PascalListenter = require('./pascalListener');
 
+var KEYWORDS = [
+	'AND',
+	'ARRAY',
+	'BEGIN',
+	'BOOLEAN',
+	'CASE',
+	'CHAR',
+	'CHR',
+	'CONST',
+	'DIV',
+	'DO',
+	'DOWNTO',
+	'ELSE',
+	'END',
+	'FILE',
+	'FOR',
+	'FUNCTION',
+	'GOTO',
+	'IF',
+	'IN',
+	'INTEGER',
+	'LABEL',
+	'MOD',
+	'NIL',
+	'NOT',
+	'OF',
+	'OR',
+	'PACKED',
+	'PROCEDURE',
+	'PROGRAM',
+	'READLIN',
+	'REAL',
+	'RECORD',
+	'REPEAT',
+	'SET',
+	'STRING',
+	'THEN',
+	'TO',
+	'TYPE',
+	'UNTIL',
+	'VAR',
+	'WHILE',
+	'WITH',
+	'WRITE',
+	'WRITELN'
+];
+
 PascalErrorListener = function(res) {
     this.Res = res;
     this.symbol = '';
@@ -21,10 +68,14 @@ PascalErrorListener.prototype.syntaxError = function(recognizer, offendingSymbol
     if(offendingSymbol == null)
         this.symbol = recognizer.getTokenErrorDisplay(offendingSymbol);
     else
-        this.symbol = offendingSymbol.text;
+		this.symbol = offendingSymbol.text;
     
-    if(msg.includes("mismatched")) { // Missing closing parenthesis
-        process.stdout.write("SYNTAX ERROR at [COLUMN " + column + "] Mismatched input: " + msg + "\n");
+	if(msg.includes("mismatched")) { // Missing closing parenthesis
+		if(KEYWORDS.includes((this.symbol).toString().toUpperCase())) {
+			process.stdout.write("SEMANTIC ERROR at [COLUMN " + column + "] Keyword error: cannot use reserved keyword '" + this.symbol + "' as an identifier\n");
+		} else {
+			process.stdout.write("SYNTAX ERROR at [COLUMN " + column + "] Mismatched input: " + msg + "\n");
+		}
     } else if (msg.includes("missing")) {
         process.stdout.write(" SYNTAX ERROR at [COLUMN " + column + "] Missing syntax: " + msg + "\n");
     } else if (msg.includes("expecting")) {
