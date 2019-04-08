@@ -5,6 +5,53 @@ const VariableSymbol = require('../symbol-table/VariableSymbol');
 const ProcedureSymbol = require('../symbol-table/ProcedureSymbol');
 const FunctionSymbol = require('../symbol-table/FunctionSymbol');
 
+var KEYWORDS = [
+	'AND',
+	'ARRAY',
+	'BEGIN',
+	'BOOLEAN',
+	'CASE',
+	'CHAR',
+	'CHR',
+	'CONST',
+	'DIV',
+	'DO',
+	'DOWNTO',
+	'ELSE',
+	'END',
+	'FILE',
+	'FOR',
+	'FUNCTION',
+	'GOTO',
+	'IF',
+	'IN',
+	'INTEGER',
+	'LABEL',
+	'MOD',
+	'NIL',
+	'NOT',
+	'OF',
+	'OR',
+	'PACKED',
+	'PROCEDURE',
+	'PROGRAM',
+	'READLIN',
+	'REAL',
+	'RECORD',
+	'REPEAT',
+	'SET',
+	'STRING',
+	'THEN',
+	'TO',
+	'TYPE',
+	'UNTIL',
+	'VAR',
+	'WHILE',
+	'WITH',
+	'WRITE',
+	'WRITELN'
+];
+
 var visitor = function() {
     PascalVisitor.pascalVisitor.call(this); // chain the constructor
     this.ctr = 0;
@@ -76,11 +123,19 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
 
 visitor.prototype.visitIdentifierList = function(ctx) {
   var variables =[];
+  var isReserved = false;
   for(var i = 0; i < ctx.getChildCount(); i+=2) {
     var temp = ctx.getChild(i).getText()
+
+    isReserved = KEYWORDS.includes(temp.toString());
+    //console.log("HELLO THERE TEMP: " + temp + " " + isReserved);
+
     //insert checking if reserved word
-    if(temp != undefined)
+    if(temp != undefined && !isReserved)
       variables.push(temp)
+
+    if(isReserved)
+      console.log("ERROR: " + temp + " is a reserved keyword");
   }
   
   return variables;
@@ -105,8 +160,8 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
 
 visitor.prototype.visitFunctionDeclaration = function(ctx) {
   var funcName = this.visit(ctx.identifier())
-  var funcReturn = this.visit(ctx.resultType())
-  var funcSymbol = new FunctionSymbol(funcName, funcReturn)
+  var funcReturn = this.visit(ctx.resultType().typeIdentifier())
+  var funcSymbol = new FunctionSymbol(funcName, this.scope.lookup(funcReturn.toUpperCase()))
 
   this.scope.define(funcSymbol)
   this.scope = new SymbolTable(funcName, 
@@ -166,35 +221,73 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
 visitor.prototype.visitAssignmentStatement = function(ctx) {
   var varName = this.visit(ctx.variable())
   var varSymbol = this.scope.lookup(varName)
+  var funcName = this.scope.scopeName
+  //console.log(varSymbol)
+  //console.log(this.scope.scopeName)
   if(!varSymbol) {
       throw new Error(`Variable not declared ${varName}`);
   }
   var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
-  var varType = varSymbol.type.name
-  //console.log(value)
-  //console.log(value.toString())
+  var isReturn = false
+  var error = false
+  var varType
+  var errorMessage
+  if(this.scope.scopeName===varSymbol.name) {
+    varType = varSymbol.returnType.name
+    isReturn = true
+    //errorMessage = `Return type mismatch: function ${this.scope.scopename}`
+  } else
+    var varType = varSymbol.type.name
+
+  for (x in value){
+    console.log("value[] " + value);
+  }
   for(x in value) {
     var temp = value[x]
     if(temp.includes('\'')) {
-      if(temp.length == 3)
-        if(varType !== 'STRING' && varType !== 'CHAR')
-          throw new Error(`Data type mismatch: Can't assign ${temp} to non-char/string variable`);
-      else
-        if(varType !== 'STRING')
-          throw new Error(`Data type mismatch: Can't assign ${temp} to non-string variable`);
+        console.log("~~~~~~~~~~~~~~~~~~~~~")
+        console.log("TEMP is: " + temp);
+        console.log("varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
+        //console.log(temp.length);
+      if(temp.length == 3) {
+        if(!(varType !== 'STRING' && varType !== 'CHAR')) {
+           //varSymbol.setValue(temp); 
+           varSymbol = new VariableSymbol(varName, varType,false,temp);
+           console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
+        }
+      } else {
+        if(!(varType !== 'STRING')) {
+          //varSymbol.setValue(temp);
+          varSymbol = new VariableSymbol(varName, varType,false,temp);
+          console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
+        }
+      }
     } else if(!isNaN(temp)) {
-      if(varType !== 'INTEGER')
-        throw new Error(`Data type mismatch: Can't assign ${temp} to non-int variable`);
+      if(!(varType !== 'INTEGER')) {
+        varSymbol = new VariableSymbol(varName, varType,false,temp);
+        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
+      }
     } else if(temp == true || temp == false){
-      if(varType !== 'BOOLEAN')
-        throw new Error(`Data type mismatch: Can't assign ${temp} to non-boolean variable`);
+      if(!(varType !== 'BOOLEAN')) {
+        varSymbol = new VariableSymbol(varName, varType,false,temp);
+        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
+      }
     } else {
       var varTemp = this.scope.lookup(temp)
-      if(!varTemp)
-          throw new Error(`Variable not declared ${temp}`);
-      if(varType !== varTemp.type.name)
-      throw new Error(`Data type mismatch: ${varName} and ${temp}`);
+      if(varTemp) {
+        varSymbol = new VariableSymbol(varName, varType,false,temp);
+        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
+      }
+      if(!(varType !== varTemp.type.name)){
+        varSymbol = new VariableSymbol(varName, varType,false,temp);
+        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
+      }
 
+    }
+    if(error) {
+        if(isReturn)
+            throw new Error(`Return type mismatch: function ${funcName}`)
+        throw new Error(errorMessage)
     }
   }
 };
