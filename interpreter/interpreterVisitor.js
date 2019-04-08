@@ -179,7 +179,6 @@ visitor.prototype.visitFunctionDeclaration = function(ctx) {
   this.scope = new SymbolTable(funcName, 
     this.scope.scopeLevel+1, this.scope)
 
-  //insert parameters chuchu
   var parameters = this.visit(ctx.formalParameterList())
   funcSymbol.params = parameters
   this.visit(ctx.block())
@@ -238,12 +237,14 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
 };
 
 visitor.prototype.visitAssignmentStatement = function(ctx) {
+
+  //include assignment for array type
   var varSymbol = this.visit(ctx.variable())
   var funcName = this.scope.scopeName
   //console.log(varSymbol)
   //console.log(this.scope.scopeName)
 
-  var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
+  var value = this.visit(ctx.expression())
   var isReturn = this.scope.scopeName===varSymbol.name?true:false
 
   varSymbol.value = value
@@ -252,36 +253,168 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
     return value;
 };
 
+visitor.prototype.visitExpression = function(ctx) {
+  if(ctx.getChildCount() == 1)
+    return this.visit(ctx.simpleExpression())
+
+  
+  var operation = this.visit(ctx.relationaloperator())
+  var operand1 = this.visit(ctx.simpleExpression())
+  var operand2 = this.visit(ctx.expression())
+  if(operation === "=")
+    return operand1 == operand2
+    else if (operation === "<>")
+      return operand1 != operand2
+    else if (operation === "<")
+      return operand1 < operand2
+    else if (operation === ">")
+      return operand1 > operand2
+    else if (operation === "<=")
+      return operand1 <= operand2
+    else if (operation === "=>")
+      return operand1 => operand2
+  
+};
+
 visitor.prototype.visitSimpleExpression = function(ctx) {
-  var values = []
-  for(var i = 0; i < ctx.getChildCount(); i+=2) {
-    var temp = this.visit(ctx.getChild(i))
-    values.push(temp)
+  if(ctx.getChildCount() == 1)
+    return this.visit(ctx.term())
+
+  
+  var operation = this.visit(ctx.additiveoperator())
+  var operand1 = this.visit(ctx.term())
+  var operand2 = this.visit(ctx.simpleExpression())
+  if(operation === "+")
+    return operand1 + operand2
+  else if (operation === "-")
+    return operand1 - operand2
+  else if (operation.toUpperCase() === "OR"){
+    // di ko pa alam paano to HAHA
   }
-  return values
 };
 
 visitor.prototype.visitTerm = function(ctx) {
-  var values = []
-  for(var i = 0; i < ctx.getChildCount(); i+=2) {
-    var temp = this.visit(ctx.getChild(i))
-    values.push(temp)
+  if(ctx.getChildCount() == 1)
+    return this.visit(ctx.signedFactor())
+
+  
+  var operation = this.visit(ctx.multiplicativeoperator())
+  var operand1 = this.visit(ctx.signedFactor())
+  var operand2 = this.visit(ctx.term())
+  if(operation === "*")
+    return operand1 * operand2
+  else if (operation.toUpperCase() === "DIV")
+    return operand1 / operand2
+  else if (operation.toUpperCase() === "MOD")
+    return operand1 % operand2
+  else if (operation.toUpperCase() === "AND"){
+    // di ko pa alam paano to HAHA
   }
-  return values
 };
 
-visitor.prototype.visitAdditiveoperator = function(ctx){};
-visitor.prototype.visitMultiplicativeoperator = function(ctx){};
+visitor.prototype.visitAdditiveoperator = function(ctx){
+  return ctx.getText()
+};
+visitor.prototype.visitMultiplicativeoperator = function(ctx){
+  return ctx.getText()
+};
 
 visitor.prototype.visitSignedFactor = function(ctx){
-  return this.visit(ctx.factor())
+  if(ctx.getChildCount() == 2)
+    if(ctx.getChild(0).getText() === "-")
+      return this.visit(ctx.factor())*-1
+  return this.visit(ctx.factor())  
 };
 
 visitor.prototype.visitFactor = function(ctx){
-  if(ctx.getChildCount() == 1)
+
+  // insert operation for NOT
+  if(ctx.getChild(0).constructor.name === "TerminalNodeImpl")
+    return this.visit(ctx.factor())
+  if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
+    return this.visit(ctx.functionDesignator())
+  if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"
+  || ctx.getChild(0).constructor.name === "BoolContext")
     return ctx.getText()
-  else
+  if(ctx.getChild(0).constructor.name === "VariableContext"){
+    var variable = this.visit(ctx.variable())
+    return variable.type.name === "INTEGER"
+    ? parseInt(variable.value) : variable.value
+  }
+  else 
     return this.visit(ctx.expression())
 };
+
+
+visitor.prototype.visitWriteln = function(ctx){
+  //not sure if enough na yung console.log lang or need \n
+  if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
+    console.log("\n")
+};
+
+visitor.prototype.visitWriteln = function(ctx){
+  //not sure if enough na yung console.log lang or need \n
+  if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
+    console.log("\n")
+  else ctx.outputList();
+};
+
+visitor.prototype.visitWrite = function(ctx){
+  //para no newline
+  if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
+    process.stdout.write("\n")
+  else ctx.outputList();
+};
+
+visitor.prototype.visitOutputList = function(ctx){
+  // if constant, loop through each; var msg=""
+  // if variable, get value (msg+=value)
+  // else, getText() (msg+=getText())
+  // console.log(msg)
+
+  //else
+  console.log(this.visit(ctx.visitFunctionDesignator()))
+
+  // if sasama sa constant, include lang yung funcDesignator sa loop
+};
+
+visitor.prototype.visitReadln = function(ctx){
+  var variables = this.visit(ctx.identifierList())
+  // loop through all and lookup symbol of each variable
+  //https://flaviocopes.com/node-input-from-cli/ -> use for input
+  // check if match yung data types 
+  // (look at visitConstant for reference sa checking ng input)
+
+};
+
+
+visitor.prototype.visitFunctionDesignator = function(ctx){
+  // assign values to the parameters
+  // loop through each statement in the function
+  // if equal to function name yung variable, return that value
+};
+
+visitor.prototype.visitProcedureStatement = function(ctx){
+  // assign values to the parameters
+  // loop through each statement in the function
+  
+};
+
+visitor.prototype.visitForStatement = function(ctx){
+// get varsymbol of the identifier
+// get indices through from the forList
+//for (var id = start; id < end; id++)
+// get the statements to be executed
+
+// assign end to value of varsymbol
+};
+
+visitor.prototype.visitIfStatement = function(ctx){
+  // get expression
+  // if(expression)
+  // get statements under if
+  // kung may else, get the statement under din
+  };
+
 
 exports.interpreterVisitor = visitor;

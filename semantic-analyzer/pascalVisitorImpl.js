@@ -344,6 +344,8 @@ visitor.prototype.visitSignedFactor = function(ctx){
 };
 
 visitor.prototype.visitFactor = function(ctx){
+  if(ctx.getChild(0).constructor.name === "TerminalNodeImpl")
+    return this.visit(ctx.factor())
   if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
   if(ctx.getChildCount() == 1)

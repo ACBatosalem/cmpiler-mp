@@ -257,7 +257,6 @@ relationaloperator
    | LE
    | GE
    | GT
-   | IN
    ;
 
 simpleExpression

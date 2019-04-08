@@ -2508,7 +2508,7 @@ public class pascalParser extends Parser {
 			setState(436);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
-			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IN) | (1L << EQUAL) | (1L << NOT_EQUAL) | (1L << LT) | (1L << LE) | (1L << GE) | (1L << GT))) != 0)) {
+			if ((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUAL) | (1L << NOT_EQUAL) | (1L << LT) | (1L << LE) | (1L << GE) | (1L << GT))) != 0)) {
 				{
 				setState(433);
 				relationaloperator();
@@ -2537,7 +2537,6 @@ public class pascalParser extends Parser {
 		public TerminalNode LE() { return getToken(pascalParser.LE, 0); }
 		public TerminalNode GE() { return getToken(pascalParser.GE, 0); }
 		public TerminalNode GT() { return getToken(pascalParser.GT, 0); }
-		public TerminalNode IN() { return getToken(pascalParser.IN, 0); }
 		public RelationaloperatorContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -2553,7 +2552,7 @@ public class pascalParser extends Parser {
 			{
 			setState(438);
 			_la = _input.LA(1);
-			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << IN) | (1L << EQUAL) | (1L << NOT_EQUAL) | (1L << LT) | (1L << LE) | (1L << GE) | (1L << GT))) != 0)) ) {
+			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << EQUAL) | (1L << NOT_EQUAL) | (1L << LT) | (1L << LE) | (1L << GE) | (1L << GT))) != 0)) ) {
 			_errHandler.recoverInline(this);
 			}
 			else {
@@ -3733,12 +3732,12 @@ public class pascalParser extends Parser {
 		"C\3C\3C\3C\3D\3D\3D\3D\3E\3E\3F\3F\3F\2\2G\2\4\6\b\n\f\16\20\22\24\26"+
 		"\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJLNPRTVXZ\\^`bdfhjlnprtvxz|"+
 		"~\u0080\u0082\u0084\u0086\u0088\u008a\2\b\3\2#$\3\2:;\6\2\6\6\b\b\22\22"+
-		"99\4\2\21\21*/\4\2\27\27#$\6\2\3\3\n\n\24\24%%\2\u0237\2\u008c\3\2\2\2"+
-		"\4\u0098\3\2\2\2\6\u009a\3\2\2\2\b\u00a2\3\2\2\2\n\u00a5\3\2\2\2\f\u00ad"+
-		"\3\2\2\2\16\u00b8\3\2\2\2\20\u00c5\3\2\2\2\22\u00c7\3\2\2\2\24\u00c9\3"+
-		"\2\2\2\26\u00cb\3\2\2\2\30\u00cd\3\2\2\2\32\u00cf\3\2\2\2\34\u00d3\3\2"+
-		"\2\2\36\u00d9\3\2\2\2 \u00db\3\2\2\2\"\u00df\3\2\2\2$\u00e3\3\2\2\2&\u00e5"+
-		"\3\2\2\2(\u00e7\3\2\2\2*\u00fd\3\2\2\2,\u00ff\3\2\2\2.\u0107\3\2\2\2\60"+
+		"99\3\2*/\4\2\27\27#$\6\2\3\3\n\n\24\24%%\2\u0237\2\u008c\3\2\2\2\4\u0098"+
+		"\3\2\2\2\6\u009a\3\2\2\2\b\u00a2\3\2\2\2\n\u00a5\3\2\2\2\f\u00ad\3\2\2"+
+		"\2\16\u00b8\3\2\2\2\20\u00c5\3\2\2\2\22\u00c7\3\2\2\2\24\u00c9\3\2\2\2"+
+		"\26\u00cb\3\2\2\2\30\u00cd\3\2\2\2\32\u00cf\3\2\2\2\34\u00d3\3\2\2\2\36"+
+		"\u00d9\3\2\2\2 \u00db\3\2\2\2\"\u00df\3\2\2\2$\u00e3\3\2\2\2&\u00e5\3"+
+		"\2\2\2(\u00e7\3\2\2\2*\u00fd\3\2\2\2,\u00ff\3\2\2\2.\u0107\3\2\2\2\60"+
 		"\u0109\3\2\2\2\62\u010b\3\2\2\2\64\u0116\3\2\2\2\66\u011a\3\2\2\28\u011f"+
 		"\3\2\2\2:\u0121\3\2\2\2<\u0129\3\2\2\2>\u0140\3\2\2\2@\u0142\3\2\2\2B"+
 		"\u0146\3\2\2\2D\u014e\3\2\2\2F\u0158\3\2\2\2H\u015c\3\2\2\2J\u0162\3\2"+
