@@ -179,7 +179,7 @@ procedureDeclaration
    ;
 
 formalParameterList
-   : LP formalParameterSection (SEMI formalParameterSection)* RP
+   : LP formalParameterSection* (SEMI formalParameterSection)* RP
    ;
 
 formalParameterSection
@@ -301,7 +301,7 @@ unsignedConstant
    ;
 
 functionDesignator
-   : variable LP parameterList RP
+   : variable LP parameterList* RP
    ;
 
 parameterList
@@ -310,7 +310,7 @@ parameterList
 
 
 procedureStatement
-   : variable (LP parameterList RP)?
+   : variable (LP parameterList* RP)?
    ;
 
 actualParameter

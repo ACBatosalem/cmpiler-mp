@@ -83,7 +83,12 @@ visitor.prototype.visitCompoundStatement = function(ctx) {
 };
 
 visitor.prototype.visitType = function(ctx) {
-  return ctx.getText();
+  if(ctx.getChild(0).constructor.name === "SimpleTypeContext") {
+    return ctx.getText();
+  } else {
+    var x = this.visit(ctx.structuredType().arrayType());
+    return x
+  }
 };
 
 visitor.prototype.visitIdentifier = function(ctx) {
@@ -95,7 +100,9 @@ visitor.prototype.visitTypeIdentifier = function(ctx) {
 };
 
 visitor.prototype.visitVariable = function(ctx) {
-  return ctx.getText();
+  var varName = this.visit(ctx.identifier());
+  var varSymbol = this.scope.lookup(varName + '');
+  return varSymbol
 };
 
 visitor.prototype.visitVariableDeclaration = function(ctx) {
@@ -105,37 +112,33 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
   var type = this.visit(ctx.type())
   //console.log(type)
 
-  const typeSymbol = this.scope.lookup(type.toUpperCase());
-  for(x in variables) {
-    var varName = variables[x]
-    //console.log(this.scope.lookup(varName, true))
-    if(this.scope.lookup(varName, true))
-      throw new Error(`Duplicate declaration of ${varName}`);
-      //console.log("error: duplicate")
-    else {
-      var varSymbol = new VariableSymbol(varName, typeSymbol);
-      this.scope.define(varSymbol)
+  var varType = type.type != undefined? type.type : type
+  
+    const typeSymbol = this.scope.lookup(varType.toUpperCase());
+    for(x in variables) {
+      var varName = variables[x]
+      //console.log(this.scope.lookup(varName, true))
+      if(this.scope.lookup(varName, true))
+        throw new Error(`Duplicate declaration of ${varName}`);
+        //console.log("error: duplicate")
+      else if(type.indices == undefined){
+        var varSymbol = new VariableSymbol(varName, typeSymbol);
+        this.scope.define(varSymbol)
+      } else {
+        var arrSymbol = new ArraySymbol(varName, typeSymbol
+          ,parseInt(type.indices[0]),parseInt(type.indices[1]));
+        this.scope.define(arrSymbol)
+      }
     }
-  }
 
   return 
 };
 
 visitor.prototype.visitIdentifierList = function(ctx) {
   var variables =[];
-  var isReserved = false;
   for(var i = 0; i < ctx.getChildCount(); i+=2) {
     var temp = ctx.getChild(i).getText()
-
-    isReserved = KEYWORDS.includes(temp.toString());
-    //console.log("HELLO THERE TEMP: " + temp + " " + isReserved);
-
-    //insert checking if reserved word
-    if(temp != undefined && !isReserved)
-      variables.push(temp)
-
-    if(isReserved)
-      console.log("ERROR: " + temp + " is a reserved keyword");
+    variables.push(temp)
   }
   
   return variables;
@@ -151,12 +154,21 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
     this.scope.scopeLevel+1, this.scope)
 
   //insert parameters chuchu
-  this.visit(ctx.formalParameterList())
+  var parameters = this.visit(ctx.formalParameterList())
+  procedureSymbol.params = parameters
   this.visit(ctx.block())
   console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
 
 };
+
+visitor.prototype.visitFormalParameterList = function(ctx) {
+  var parameters = []
+  for(var i = 1; i < ctx.getChildCount(); i+=2) {
+    parameters.push(this.visit(ctx.getChild(i))[0])
+  }
+  return parameters
+}
 
 visitor.prototype.visitFunctionDeclaration = function(ctx) {
   var funcName = this.visit(ctx.identifier())
@@ -168,31 +180,38 @@ visitor.prototype.visitFunctionDeclaration = function(ctx) {
     this.scope.scopeLevel+1, this.scope)
 
   //insert parameters chuchu
-  this.visit(ctx.formalParameterList())
+  var parameters = this.visit(ctx.formalParameterList())
+  funcSymbol.params = parameters
   this.visit(ctx.block())
   console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
 
 };
 
+visitor.prototype.visitFormalParameterSection = function(ctx) {
+  return this.visit(ctx.parameterGroup())
+}
+
 visitor.prototype.visitParameterGroup = function(ctx) {
   var variables = this.visit(ctx.identifierList())
   //console.log(variables)
   var type = this.visit(ctx.typeIdentifier())
   //console.log(type)
-
+  var parameters =[]
   const typeSymbol = this.scope.lookup(type.toUpperCase());
   for(x in variables) {
     var varName = variables[x]
     //console.log(this.scope.lookup(varName, true))
     if(this.scope.lookup(varName, true))
-      //throw new Error(`Duplicate declaration of ${varName}`);
-      console.log("error: duplicate")
+      throw new Error(`Duplicate declaration of ${varName}`);
+      // console.log("error: duplicate")
     else {
       var varSymbol = new VariableSymbol(varName, typeSymbol);
       this.scope.define(varSymbol)
+      parameters.push(varSymbol)
     }
   }
+  return parameters
 };
 
 visitor.prototype.visitConstantDefinition = function(ctx) {
@@ -219,77 +238,18 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
 };
 
 visitor.prototype.visitAssignmentStatement = function(ctx) {
-  var varName = this.visit(ctx.variable())
-  var varSymbol = this.scope.lookup(varName)
+  var varSymbol = this.visit(ctx.variable())
   var funcName = this.scope.scopeName
   //console.log(varSymbol)
   //console.log(this.scope.scopeName)
-  if(!varSymbol) {
-      throw new Error(`Variable not declared ${varName}`);
-  }
+
   var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
-  var isReturn = false
-  var error = false
-  var varType
-  var errorMessage
-  if(this.scope.scopeName===varSymbol.name) {
-    varType = varSymbol.returnType.name
-    isReturn = true
-    //errorMessage = `Return type mismatch: function ${this.scope.scopename}`
-  } else
-    var varType = varSymbol.type.name
+  var isReturn = this.scope.scopeName===varSymbol.name?true:false
 
-  for (x in value){
-    console.log("value[] " + value);
-  }
-  for(x in value) {
-    var temp = value[x]
-    if(temp.includes('\'')) {
-        console.log("~~~~~~~~~~~~~~~~~~~~~")
-        console.log("TEMP is: " + temp);
-        console.log("varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
-        //console.log(temp.length);
-      if(temp.length == 3) {
-        if(!(varType !== 'STRING' && varType !== 'CHAR')) {
-           //varSymbol.setValue(temp); 
-           varSymbol = new VariableSymbol(varName, varType,false,temp);
-           console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
-        }
-      } else {
-        if(!(varType !== 'STRING')) {
-          //varSymbol.setValue(temp);
-          varSymbol = new VariableSymbol(varName, varType,false,temp);
-          console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
-        }
-      }
-    } else if(!isNaN(temp)) {
-      if(!(varType !== 'INTEGER')) {
-        varSymbol = new VariableSymbol(varName, varType,false,temp);
-        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
-      }
-    } else if(temp == true || temp == false){
-      if(!(varType !== 'BOOLEAN')) {
-        varSymbol = new VariableSymbol(varName, varType,false,temp);
-        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
-      }
-    } else {
-      var varTemp = this.scope.lookup(temp)
-      if(varTemp) {
-        varSymbol = new VariableSymbol(varName, varType,false,temp);
-        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
-      }
-      if(!(varType !== varTemp.type.name)){
-        varSymbol = new VariableSymbol(varName, varType,false,temp);
-        console.log("AFTER ASSIGNING: varSymbol is: " + varSymbol.name + "  " + varSymbol.value);
-      }
+  varSymbol.value = value
 
-    }
-    if(error) {
-        if(isReturn)
-            throw new Error(`Return type mismatch: function ${funcName}`)
-        throw new Error(errorMessage)
-    }
-  }
+  if(isReturn)
+    return value;
 };
 
 visitor.prototype.visitSimpleExpression = function(ctx) {

@@ -13,7 +13,7 @@
             "startRule": "program",
             "printParseTree": true,
             "visualParseTree": true,
-            "input": "grammar/input.txt"
+            "input": "grammar/inputfiles/input.txt"
         }
     ]
 }

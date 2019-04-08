@@ -87,8 +87,7 @@ visitor.prototype.visitType = function(ctx) {
   if(ctx.getChild(0).constructor.name === "SimpleTypeContext") {
     return ctx.getText();
   } else {
-    var x = 
-    this.visit(ctx.structuredType().arrayType());
+    var x = this.visit(ctx.structuredType().arrayType());
     return x
   }
 };
@@ -115,7 +114,7 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
   var variables = this.visit(ctx.identifierList())
   //console.log(variables)
   var type = this.visit(ctx.type())
-  console.log(type)
+  //console.log(type)
   var varType = type.type != undefined? type.type : type
   
     const typeSymbol = this.scope.lookup(varType.toUpperCase());
@@ -170,8 +169,8 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
 
   //insert parameters chuchu
   var parameters = this.visit(ctx.formalParameterList())
-  console.log(parameters)
-  procedureSymbol.params = parameters
+  //console.log(parameters)
+  procedureSymbol.params = parameters[0]
   this.visit(ctx.block())
   console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
@@ -180,9 +179,11 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
 
 visitor.prototype.visitFormalParameterList = function(ctx) {
   var parameters = []
-  for(var i = 1; i < ctx.getChildCount(); i+=2) {
-    parameters.push(this.visit(ctx.getChild(i))[0])
-  }
+  console.log(this.scope.scopeName)
+  if(ctx.getChildCount() != 2)
+    for(var i = 1; i < ctx.getChildCount(); i+=2) {
+      parameters.push(this.visit(ctx.getChild(i)))
+    }
   return parameters
 }
 
@@ -194,10 +195,10 @@ visitor.prototype.visitFunctionDeclaration = function(ctx) {
   this.scope.define(funcSymbol)
   this.scope = new SymbolTable(funcName, 
     this.scope.scopeLevel+1, this.scope)
-
+  console.log(funcName)
   //insert parameters chuchu
   var parameters = this.visit(ctx.formalParameterList())
-  funcSymbol.params = parameters
+  funcSymbol.params = parameters[0]
   this.visit(ctx.block())
   console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
@@ -276,7 +277,6 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
   for(x in value) {
     var temp = value[x]
     if(temp.includes('\'')) {
-        console.log(temp.length)
       if(temp.length == 3) {
         if(varType !== 'STRING' && varType !== 'CHAR') {
             error = true
@@ -293,7 +293,7 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
         error = true
         errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable`
       }
-    } else if(temp == true || temp == false){
+    } else if(temp == true || temp == false || temp == 'true' || temp == 'false'){
       if(varType !== 'BOOLEAN') {
         error = true
         errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable`
@@ -355,7 +355,12 @@ visitor.prototype.visitFactor = function(ctx){
 visitor.prototype.visitFunctionDesignator = function(ctx) {
   var func = this.visit(ctx.variable())
   var funcParams = func.params
-  var parameters = this.visit(ctx.parameterList())
+  var parameters = this.visit(ctx.parameterList())[0]
+  console.log("GRRR")
+
+  console.log(funcParams)
+  console.log("GRRR!!!")
+  console.log(parameters)
   var error = false
   if(funcParams.length != parameters.length)
     throw new Error (`ERROR: parameter length does not match`);
@@ -364,7 +369,6 @@ visitor.prototype.visitFunctionDesignator = function(ctx) {
     var temp = parameters[x]
     var varType = funcParams[x].type.name
     if(temp.includes('\'')) {
-        console.log(temp.length)
       if(temp.length == 3) {
         if(varType !== 'STRING' && varType !== 'CHAR') {
             error = true
@@ -475,6 +479,15 @@ visitor.prototype.visitComponentType = function(ctx) {
     throw new Error(`Cannot instantiate a non-integer array`);
 
   return ctx.getText();
+};
+
+visitor.prototype.visitOutputList = function(ctx) {
+  for(var i = 0; i < ctx.getChildCount(); i++) {
+    if(ctx.getChild(i).constructor.name === "FunctionDesignatorContext"){
+      
+      this.visit(ctx.functionDesignator())
+    }
+  }
 };
 
 exports.pascalVisitorImpl = visitor;

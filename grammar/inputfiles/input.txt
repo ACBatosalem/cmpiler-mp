@@ -54,9 +54,9 @@ begin
    writeln('result is initially ', result);
    
    X := 0;
-   X := Y + num1 + num2;
+   X := y + num1 + num2;
    
-   if not( X < 10 ) then
+   if ( X < 10 ) then
    begin
         writeln('boo will be changed to false');
         boo := false
