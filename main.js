@@ -5,6 +5,8 @@ var PascalVisitorImpl = require("./semantic-analyzer/pascalVisitorImpl.js");
 var PascalErrorListener = require('./grammar/pascalErrorListener.js').PascalErrorListener;
 var SemanticAnalyzer = require('./semantic-analyzer/SemanticAnalyzer.js');
 var fs = require("fs")
+var InterpreterVisitor = require("./interpreter/interpreterVisitor.js");
+
 
 var main = function(input) {
     var chars = new antlr4.InputStream(input);
@@ -23,9 +25,12 @@ var main = function(input) {
     var tree = parser.program();
     //console.log(tree.toStringTree(parser.ruleNames));
 
-    var printer = new PascalVisitorImpl.pascalVisitorImpl();
-    printer.visitProgram(tree);
+    //var printer = new PascalVisitorImpl.pascalVisitorImpl();
+    //printer.visitProgram(tree);
     //analyzer.visit(tree);
+
+    var aast = new InterpreterVisitor.interpreterVisitor();
+    aast.visitProgram(tree);
 
     //antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
    /* var result = printer.stack.slice(-1).pop();
