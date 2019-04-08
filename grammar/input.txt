@@ -1,15 +1,9 @@
 program MAIN;
-var y:char;
-x:integer;
-function oof(x:integer):char;
+var x:integer;
+var arr:array[1..5] of integer;
+
 begin
-oof:=0
-end;
-begin
-y := 'a';
-{x := 'a';
-x := 'sbc';
-x := false;
-x := -(x*y)+7 div 4;
-x := x+y}
-End. {MAIN}
+  for x:= 1 to 5 do 
+        writeln('hello');
+  arr[1]:=1
+end.

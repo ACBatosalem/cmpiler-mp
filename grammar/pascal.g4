@@ -236,7 +236,7 @@ write
    ;
 
 outputList
-   : constant (COMMA constant)*
+   : constant (COMMA constant)* | functionDesignator
    ;
 
 assignmentStatement
@@ -302,7 +302,7 @@ unsignedConstant
    ;
 
 functionDesignator
-   : identifier LP parameterList RP
+   : identifier LP (parameterList) RP
    ;
 
 parameterList
