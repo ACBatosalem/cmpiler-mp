@@ -1,15 +1,20 @@
 program MAIN;
-var y:char;
-x:integer;
-function oof(x:integer):char;
-begin
-oof:=0
-end;
-begin
-y := 'a';
-{x := 'a';
-x := 'sbc';
-x := false;
-x := -(x*y)+7 div 4;
-x := x+y}
+var X, Y, Z: integer;
+xy:string;
+const a = 1;
+function P1(x:char; C: integer):integer;
+begin {P1}
+   Z := X+C; 
+   P1 := 0
+   { *** 3 *** }
+end; {P1}
+Begin {MAIN}
+   X:=0; Y:=1; Z:=3;
+   { *** 1 *** }
+   X := P1('a',Z);
+   if (X=Y) then
+      Begin
+         Y := X;
+      end;
+   { *** 4 *** }
 End. {MAIN}

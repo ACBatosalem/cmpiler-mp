@@ -4,9 +4,8 @@ const Symbol = require('./Symbol');
 
 class FunctionSymbol extends Symbol {
     constructor(name, returnType,params = []) {
-        super(name);
+        super(name,returnType);
         this.params = params;
-        this.returnType = returnType
     }
 
     getParams() {

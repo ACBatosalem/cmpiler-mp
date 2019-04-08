@@ -95,7 +95,12 @@ visitor.prototype.visitTypeIdentifier = function(ctx) {
 };
 
 visitor.prototype.visitVariable = function(ctx) {
-  return ctx.getText();
+  var varName = ctx.getText();
+  var varSymbol = this.scope.lookup(varName)
+  if(!varSymbol) {
+    throw new Error(`Variable not declared ${varName}`);
+  }
+  return varSymbol
 };
 
 visitor.prototype.visitVariableDeclaration = function(ctx) {
@@ -128,7 +133,6 @@ visitor.prototype.visitIdentifierList = function(ctx) {
     var temp = ctx.getChild(i).getText()
 
     isReserved = KEYWORDS.includes(temp.toString());
-    console.log("HELLO THERE TEMP: " + temp + " " + isReserved);
 
     //insert checking if reserved word
     if(temp != undefined && !isReserved)
@@ -151,12 +155,22 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
     this.scope.scopeLevel+1, this.scope)
 
   //insert parameters chuchu
-  this.visit(ctx.formalParameterList())
+  var parameters = this.visit(ctx.formalParameterList())
+  console.log(parameters)
+  procedureSymbol.params = parameters
   this.visit(ctx.block())
   console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
 
 };
+
+visitor.prototype.visitFormalParameterList = function(ctx) {
+  var parameters = []
+  for(var i = 1; i < ctx.getChildCount(); i+=2) {
+    parameters.push(this.visit(ctx.getChild(i))[0])
+  }
+  return parameters
+}
 
 visitor.prototype.visitFunctionDeclaration = function(ctx) {
   var funcName = this.visit(ctx.identifier())
@@ -168,19 +182,24 @@ visitor.prototype.visitFunctionDeclaration = function(ctx) {
     this.scope.scopeLevel+1, this.scope)
 
   //insert parameters chuchu
-  this.visit(ctx.formalParameterList())
+  var parameters = this.visit(ctx.formalParameterList())
+  funcSymbol.params = parameters
   this.visit(ctx.block())
   console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
 
 };
 
+visitor.prototype.visitFormalParameterSection = function(ctx) {
+  return this.visit(ctx.parameterGroup())
+}
+
 visitor.prototype.visitParameterGroup = function(ctx) {
   var variables = this.visit(ctx.identifierList())
   //console.log(variables)
   var type = this.visit(ctx.typeIdentifier())
   //console.log(type)
-
+  var parameters =[]
   const typeSymbol = this.scope.lookup(type.toUpperCase());
   for(x in variables) {
     var varName = variables[x]
@@ -191,8 +210,10 @@ visitor.prototype.visitParameterGroup = function(ctx) {
     else {
       var varSymbol = new VariableSymbol(varName, typeSymbol);
       this.scope.define(varSymbol)
+      parameters.push(varSymbol)
     }
   }
+  return parameters
 };
 
 visitor.prototype.visitConstantDefinition = function(ctx) {
@@ -219,25 +240,24 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
 };
 
 visitor.prototype.visitAssignmentStatement = function(ctx) {
-  var varName = this.visit(ctx.variable())
-  var varSymbol = this.scope.lookup(varName)
+  var varSymbol = this.visit(ctx.variable())
   var funcName = this.scope.scopeName
-  console.log(varSymbol)
-  console.log(this.scope.scopeName)
-  if(!varSymbol) {
-      throw new Error(`Variable not declared ${varName}`);
-  }
+  //console.log(varSymbol)
+  //console.log(this.scope.scopeName)
+  if(varSymbol.isConstant != undefined)
+    if(varSymbol.isConstant)
+      throw new Error(`Cannot assign to constant variable`)
+  if(varSymbol.type == undefined)
+      throw new Error(`Procedure does not return a value`)
   var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
-  var isReturn = false
+  
+  console.log("AYAW")
+  console.log(value)
+
+  var isReturn = this.scope.scopeName===varSymbol.name?true:false
   var error = false
-  var varType
+  var varType = varSymbol.type.name
   var errorMessage
-  if(this.scope.scopeName===varSymbol.name) {
-    varType = varSymbol.returnType.name
-    isReturn = true
-    //errorMessage = `Return type mismatch: function ${this.scope.scopename}`
-  } else
-    var varType = varSymbol.type.name
 
   for(x in value) {
     var temp = value[x]
@@ -268,11 +288,11 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
       var varTemp = this.scope.lookup(temp)
       if(!varTemp) {
         error = true
-        errorMessage = `Variable not declared ${temp}`
+        errorMessage = `!!Variable not declared ${temp}`
       }
-      if(varType !== varTemp.type.name){
+      else if(varType !== varTemp.type.name){
         error = true
-        errorMessage = `Data type mismatch: ${varName} and ${temp}`
+        errorMessage = `Data type mismatch: ${varSymbol.name} and ${temp}`
       }
 
     }
@@ -310,10 +330,84 @@ visitor.prototype.visitSignedFactor = function(ctx){
 };
 
 visitor.prototype.visitFactor = function(ctx){
+  if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
+    return this.visit(ctx.functionDesignator())
   if(ctx.getChildCount() == 1)
     return ctx.getText()
   else
     return this.visit(ctx.expression())
+};
+
+visitor.prototype.visitFunctionDesignator = function(ctx) {
+  var func = this.visit(ctx.variable())
+  var funcParams = func.params
+  var parameters = this.visit(ctx.parameterList())
+  var error = false
+  if(funcParams.length != parameters.length)
+    throw new Error (`ERROR: parameter length does not match`);
+
+  for(x in parameters) {
+    var temp = parameters[x]
+    var varType = funcParams[x].type.name
+    if(temp.includes('\'')) {
+        console.log(temp.length)
+      if(temp.length == 3) {
+        if(varType !== 'STRING' && varType !== 'CHAR') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable`
+        }
+      } else {
+        if(varType !== 'STRING') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable`
+        }
+      }
+    } else if(!isNaN(temp)) {
+      if(varType !== 'INTEGER') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable`
+      }
+    } else if(temp == true || temp == false){
+      if(varType !== 'BOOLEAN') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable`
+      }
+    } else {
+      var varTemp = this.scope.lookup(temp)
+      if(!varTemp) {
+        error = true
+        errorMessage = `!!Variable not declared ${temp}`
+      }
+      else if(varType !== varTemp.type.name){
+        error = true
+        errorMessage = `!!Data type mismatch: ${funcParams[x].name} and ${temp}`
+      }
+
+    }
+    if(error) 
+      throw new Error(errorMessage)
+  }
+  
+  return func.name;
+};
+
+visitor.prototype.visitParameterList = function(ctx) {
+  var variables =[];
+  var isReserved = false;
+  for(var i = 0; i < ctx.getChildCount(); i+=2) {
+    var temp = ctx.getChild(i).getText()
+
+    isReserved = KEYWORDS.includes(temp.toString());
+
+    //insert checking if reserved word
+    if(temp != undefined && !isReserved)
+      variables.push(temp)
+
+    if(isReserved)
+      throw new Error (`ERROR: ${temp} is a reserved keyword`);
+  }
+
+  return variables
 };
 
 exports.pascalVisitorImpl = visitor;

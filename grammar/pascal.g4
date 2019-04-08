@@ -79,8 +79,8 @@ constant
    | sign unsignedNumber
    | string
    | character
-   | identifier
-   | sign identifier
+   | variable
+   | sign variable
    | bool
    ;
 
@@ -128,8 +128,7 @@ subrangeType
    ;
 
 typeIdentifier
-   : identifier
-   | (CHAR | BOOLEAN | INTEGER | STRING)
+   : (CHAR | BOOLEAN | INTEGER | STRING)
    ;
 
 structuredType
@@ -302,7 +301,7 @@ unsignedConstant
    ;
 
 functionDesignator
-   : identifier LP parameterList RP
+   : variable LP parameterList RP
    ;
 
 parameterList
@@ -311,7 +310,7 @@ parameterList
 
 
 procedureStatement
-   : identifier (LP parameterList RP)?
+   : variable (LP parameterList RP)?
    ;
 
 actualParameter
