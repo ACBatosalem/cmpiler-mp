@@ -235,7 +235,7 @@ write
    ;
 
 outputList
-   : constant (COMMA constant)*
+   : constant (COMMA constant)* | functionDesignator
    ;
 
 assignmentStatement

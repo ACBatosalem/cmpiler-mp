@@ -23,8 +23,6 @@ class SymbolTable {
     define(symbol) {
         //console.log(symbol.getName() + " " + symbol)
         this.symbols.set(symbol.getName(), symbol);
-
-        return this;
     }
 
     lookup(name, currentScopeOnly = false) {

@@ -27,18 +27,6 @@ public class pascalBaseListener implements pascalListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterProgramHeading(pascalParser.ProgramHeadingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitProgramHeading(pascalParser.ProgramHeadingContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterIdentifier(pascalParser.IdentifierContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -58,6 +46,18 @@ public class pascalBaseListener implements pascalListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitBlock(pascalParser.BlockContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDeclarations(pascalParser.DeclarationsContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDeclarations(pascalParser.DeclarationsContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -87,6 +87,18 @@ public class pascalBaseListener implements pascalListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterConstantValues(pascalParser.ConstantValuesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitConstantValues(pascalParser.ConstantValuesContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterConstant(pascalParser.ConstantContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -106,18 +118,6 @@ public class pascalBaseListener implements pascalListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitUnsignedNumber(pascalParser.UnsignedNumberContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterUnsignedInteger(pascalParser.UnsignedIntegerContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitUnsignedInteger(pascalParser.UnsignedIntegerContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -166,54 +166,6 @@ public class pascalBaseListener implements pascalListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitCharacter(pascalParser.CharacterContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypeDefinitionPart(pascalParser.TypeDefinitionPartContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypeDefinitionPart(pascalParser.TypeDefinitionPartContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTypeDefinition(pascalParser.TypeDefinitionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTypeDefinition(pascalParser.TypeDefinitionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterFunctionType(pascalParser.FunctionTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitFunctionType(pascalParser.FunctionTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterProcedureType(pascalParser.ProcedureTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitProcedureType(pascalParser.ProcedureTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -291,18 +243,6 @@ public class pascalBaseListener implements pascalListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterUnpackedStructuredType(pascalParser.UnpackedStructuredTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitUnpackedStructuredType(pascalParser.UnpackedStructuredTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterStringtype(pascalParser.StringtypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -358,18 +298,6 @@ public class pascalBaseListener implements pascalListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitComponentType(pascalParser.ComponentTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterBaseType(pascalParser.BaseTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitBaseType(pascalParser.BaseTypeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -483,18 +411,6 @@ public class pascalBaseListener implements pascalListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterConstList(pascalParser.ConstListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitConstList(pascalParser.ConstListContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterFunctionDeclaration(pascalParser.FunctionDeclarationContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -526,18 +442,6 @@ public class pascalBaseListener implements pascalListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStatement(pascalParser.StatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterUnlabelledStatement(pascalParser.UnlabelledStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitUnlabelledStatement(pascalParser.UnlabelledStatementContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -814,18 +718,6 @@ public class pascalBaseListener implements pascalListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEmptyStatement(pascalParser.EmptyStatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterEmpty(pascalParser.EmptyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitEmpty(pascalParser.EmptyContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

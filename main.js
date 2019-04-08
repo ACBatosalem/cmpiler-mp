@@ -25,12 +25,12 @@ var main = function(input) {
     var tree = parser.program();
     //console.log(tree.toStringTree(parser.ruleNames));
 
-    //var printer = new PascalVisitorImpl.pascalVisitorImpl();
-    //printer.visitProgram(tree);
+    var printer = new PascalVisitorImpl.pascalVisitorImpl();
+    printer.visitProgram(tree);
     //analyzer.visit(tree);
 
-    var aast = new InterpreterVisitor.interpreterVisitor();
-    aast.visitProgram(tree);
+    //var aast = new InterpreterVisitor.interpreterVisitor();
+    //aast.visitProgram(tree);
 
     //antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
    /* var result = printer.stack.slice(-1).pop();

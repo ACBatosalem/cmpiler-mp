@@ -4,6 +4,7 @@ const SymbolTable = require('../symbol-table/SymbolTable.js');
 const VariableSymbol = require('../symbol-table/VariableSymbol');
 const ProcedureSymbol = require('../symbol-table/ProcedureSymbol');
 const FunctionSymbol = require('../symbol-table/FunctionSymbol');
+const ArraySymbol = require('../symbol-table/ArraySymbol');
 
 var KEYWORDS = [
 	'AND',
@@ -83,7 +84,13 @@ visitor.prototype.visitCompoundStatement = function(ctx) {
 };
 
 visitor.prototype.visitType = function(ctx) {
-  return ctx.getText();
+  if(ctx.getChild(0).constructor.name === "SimpleTypeContext") {
+    return ctx.getText();
+  } else {
+    var x = 
+    this.visit(ctx.structuredType().arrayType());
+    return x
+  }
 };
 
 visitor.prototype.visitIdentifier = function(ctx) {
@@ -95,8 +102,8 @@ visitor.prototype.visitTypeIdentifier = function(ctx) {
 };
 
 visitor.prototype.visitVariable = function(ctx) {
-  var varName = ctx.getText();
-  var varSymbol = this.scope.lookup(varName)
+  var varName = this.visit(ctx.identifier());
+  var varSymbol = this.scope.lookup(varName + '');
   if(!varSymbol) {
     throw new Error(`Variable not declared ${varName}`);
   }
@@ -108,20 +115,26 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
   var variables = this.visit(ctx.identifierList())
   //console.log(variables)
   var type = this.visit(ctx.type())
-  //console.log(type)
-
-  const typeSymbol = this.scope.lookup(type.toUpperCase());
-  for(x in variables) {
-    var varName = variables[x]
-    //console.log(this.scope.lookup(varName, true))
-    if(this.scope.lookup(varName, true))
-      throw new Error(`Duplicate declaration of ${varName}`);
-      //console.log("error: duplicate")
-    else {
-      var varSymbol = new VariableSymbol(varName, typeSymbol);
-      this.scope.define(varSymbol)
+  console.log(type)
+  var varType = type.type != undefined? type.type : type
+  
+    const typeSymbol = this.scope.lookup(varType.toUpperCase());
+    for(x in variables) {
+      var varName = variables[x]
+      //console.log(this.scope.lookup(varName, true))
+      if(this.scope.lookup(varName, true))
+        throw new Error(`Duplicate declaration of ${varName}`);
+        //console.log("error: duplicate")
+      else if(type.indices == undefined){
+        var varSymbol = new VariableSymbol(varName, typeSymbol);
+        this.scope.define(varSymbol)
+      } else {
+        var arrSymbol = new ArraySymbol(varName, typeSymbol
+          ,parseInt(type.indices[0]),parseInt(type.indices[1]));
+        this.scope.define(arrSymbol)
+      }
     }
-  }
+  
 
   return 
 };
@@ -139,7 +152,7 @@ visitor.prototype.visitIdentifierList = function(ctx) {
       variables.push(temp)
 
     if(isReserved)
-      console.log("ERROR: " + temp + " is a reserved keyword");
+      throw new Error("SEMANTIC ERROR Keyword error: cannot use reserved keyword " + temp + " as an identifier");
   }
   
   return variables;
@@ -148,6 +161,7 @@ visitor.prototype.visitIdentifierList = function(ctx) {
 
 visitor.prototype.visitProcedureDeclaration = function(ctx) {
   var procedureName = this.visit(ctx.identifier())
+  
   var procedureSymbol = new ProcedureSymbol(procedureName)
 
   this.scope.define(procedureSymbol)
@@ -205,8 +219,8 @@ visitor.prototype.visitParameterGroup = function(ctx) {
     var varName = variables[x]
     //console.log(this.scope.lookup(varName, true))
     if(this.scope.lookup(varName, true))
-      //throw new Error(`Duplicate declaration of ${varName}`);
-      console.log("error: duplicate")
+      throw new Error(`Duplicate declaration of ${varName}`);
+      // console.log("error: duplicate")
     else {
       var varSymbol = new VariableSymbol(varName, typeSymbol);
       this.scope.define(varSymbol)
@@ -223,7 +237,7 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
   var typeSymbol
   var value = ctx.getChild(2).getText()
   if(value.includes('\'')) {
-    console.log("string" + value.length)
+    // console.log("string" + value.length)
     if(value.length == 3)
       typeSymbol = this.scope.lookup("CHAR");
     else
@@ -251,8 +265,8 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
       throw new Error(`Procedure does not return a value`)
   var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
   
-  console.log("AYAW")
-  console.log(value)
+  // console.log("AYAW")
+  // console.log(value)
 
   var isReturn = this.scope.scopeName===varSymbol.name?true:false
   var error = false
@@ -408,6 +422,59 @@ visitor.prototype.visitParameterList = function(ctx) {
   }
 
   return variables
+}
+
+// Visit a parse tree produced by pascalParser#forStatement.
+visitor.prototype.visitForStatement = function(ctx) {
+  var id = this.scope.lookup(ctx.identifier().getText());
+
+  if(!id) {
+    throw new Error(`Variable not declared ${varName}`);
+  } 
+
+  if(id.type.name !== 'INTEGER') {
+    throw new Error(`Variable for loop index is not an integer`);
+  }
+
+  this.visit(ctx.forList());
+};
+
+
+// Visit a parse tree produced by pascalParser#forList.
+visitor.prototype.visitForList = function(ctx) {
+  var startIndex = Number.isInteger(ctx.getChild(0).getText());
+  var endIndex = Number.isInteger(ctx.getChild(2).getText());
+
+  // check if index is integer
+  if(!isNaN(startIndex) && !isNaN(endIndex)) {
+    
+  } else {
+    throw new Error('Starting and/or ending index should be an integer');
+  }
+};
+
+// Visit a parse tree produced by pascalParser#arrayType.
+visitor.prototype.visitArrayType = function(ctx) {
+
+  var indices = this.visit(ctx.typeList())
+  var type = this.visit(ctx.componentType());
+  return {"type":type, "indices":indices}
+
+};
+
+// Visit a parse tree produced by pascalParser#typeList.
+visitor.prototype.visitTypeList = function(ctx) {
+  var indices = ctx.getText().split("..");
+  return indices;
+};
+
+// Visit a parse tree produced by pascalParser#componentType.
+visitor.prototype.visitComponentType = function(ctx) {
+  // TODO error for non-integer arrays
+  if(ctx.getText().toUpperCase() !== "INTEGER")
+    throw new Error(`Cannot instantiate a non-integer array`);
+
+  return ctx.getText();
 };
 
 exports.pascalVisitorImpl = visitor;
