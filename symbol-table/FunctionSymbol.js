@@ -14,7 +14,7 @@ class FunctionSymbol extends Symbol {
     }
 
     toString() {
-        return `FunctionSymbol(${this.name}, ${this.params}, ${this.returnType}, ${this.ctx})`;
+        return `FunctionSymbol(${this.name}, ${this.params}, ${this.type}, ${this.ctx})`;
     }
 
     static create(name, returnType, params, ctx) {

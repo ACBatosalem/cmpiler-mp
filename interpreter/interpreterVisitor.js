@@ -4,7 +4,9 @@ const SymbolTable = require('../symbol-table/SymbolTable.js');
 const VariableSymbol = require('../symbol-table/VariableSymbol');
 const ProcedureSymbol = require('../symbol-table/ProcedureSymbol');
 const FunctionSymbol = require('../symbol-table/FunctionSymbol');
+var readlineSync = require('readline-sync');
 
+var symbolTables = new Map();
 var KEYWORDS = [
 	'AND',
 	'ARRAY',
@@ -63,8 +65,9 @@ visitor.prototype = Object.create(PascalVisitor.pascalVisitor.prototype);
 
 visitor.prototype.visitProgram = function(ctx) {
     this.scope = new SymbolTable('global', 1, this.scope);
+    symbolTables.set('global', this.scope)
     this.visit(ctx.block());
-    console.log(this.scope.toString())
+   //console.log(this.scope.toString())
     this.scope = this.scope.enclosingScope;
     
   };
@@ -101,7 +104,7 @@ visitor.prototype.visitTypeIdentifier = function(ctx) {
 
 visitor.prototype.visitVariable = function(ctx) {
   var varName = this.visit(ctx.identifier());
-  var varSymbol = this.scope.lookup(varName + '');
+  var varSymbol = this.scope.lookup(varName+"");
   return varSymbol
 };
 
@@ -116,7 +119,7 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
     const typeSymbol = this.scope.lookup(varType.toUpperCase());
     for(x in variables) {
       var varName = variables[x]
-      console.log(varType + " " + typeSymbol + " " + varName);
+     //console.log(varType + " " + typeSymbol + " " + varName);
       //console.log(this.scope.lookup(varName, true))
       if(this.scope.lookup(varName, true))
         throw new Error(`Duplicate declaration of ${varName}`);
@@ -152,12 +155,14 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
   this.scope.define(procedureSymbol)
   this.scope = new SymbolTable(procedureName, 
     this.scope.scopeLevel+1, this.scope)
-
+  symbolTables.set(procedureName, this.scope)
   //insert parameters chuchu
-  var parameters = this.visit(ctx.formalParameterList())
-  procedureSymbol.params = parameters
-  procedureSymbol.ctx = ctx
-  this.visit(ctx.block())
+  try {
+    var parameters = this.visit(ctx.formalParameterList())
+    funcSymbol.params = parameters
+  } catch(e){}
+  procedureSymbol.ctx = ctx.block()
+  //this.visit()
   this.scope = this.scope.enclosingScope;
 };
 
@@ -185,12 +190,16 @@ visitor.prototype.visitFunctionDeclaration = function(ctx) {
   this.scope = new SymbolTable(funcName, 
     this.scope.scopeLevel+1, this.scope)
 
-  var parameters = this.visit(ctx.formalParameterList())
-  funcSymbol.params = parameters
-  funcSymbol.returnType = funcReturn;
-  funcSymbol.ctx = ctx;
-  this.visit(ctx.block())
-  console.log(this.scope.toString())
+  try {
+    var parameters = this.visit(ctx.formalParameterList())
+    funcSymbol.params = parameters
+    //console.log(this.scope.toString())
+  } catch(e){}
+  symbolTables.set(funcName, this.scope)
+
+  funcSymbol.ctx = ctx.block()
+  //this.visit()
+ //console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
 
 };
@@ -211,7 +220,7 @@ visitor.prototype.visitParameterGroup = function(ctx) {
     //console.log(this.scope.lookup(varName, true))
     if(this.scope.lookup(varName, true))
       throw new Error(`Duplicate declaration of ${varName}`);
-      // console.log("error: duplicate")
+      //console.log("error: duplicate")
     else {
       var varSymbol = new VariableSymbol(varName, typeSymbol);
       this.scope.define(varSymbol)
@@ -228,7 +237,7 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
   var typeSymbol
   var value = ctx.getChild(2).getText()
   if(value.includes('\'')) {
-    console.log("string" + value.length)
+   //console.log("string" + value.length)
     if(value.length == 3)
       typeSymbol = this.scope.lookup("CHAR");
     else
@@ -278,8 +287,8 @@ visitor.prototype.visitExpression = function(ctx) {
     return operand1 > operand2
   else if (operation === "<=")
     return operand1 <= operand2
-  else if (operation === "=>")
-    return operand1 => operand2
+  else if (operation === ">=")
+    return operand1 >= operand2
   
 };
 
@@ -352,9 +361,11 @@ visitor.prototype.visitFactor = function(ctx){
   if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
   if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"
-  || ctx.getChild(0).constructor.name === "BoolContext")
-    return isNaN(ctx.getText())?ctx.getText():parseInt(ctx.getText())
-  if(ctx.getChild(0).constructor.name === "VariableContext"){
+  || ctx.getChild(0).constructor.name === "BoolContext"){
+    var txt = ctx.getText().replace(/\'/g,'')
+
+    return isNaN(txt)?txt:parseInt(txt)
+  }if(ctx.getChild(0).constructor.name === "VariableContext"){
     var variable = this.visit(ctx.variable())
     return variable.type.name === "INTEGER"
     ? parseInt(variable.value) : variable.value
@@ -369,7 +380,6 @@ visitor.prototype.visitFactor = function(ctx){
 
 
 visitor.prototype.visitWriteln = function(ctx){
-  console.log('writeln hereee');
   //not sure if enough na yung console.log lang or need \n
   if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
     console.log("\n")
@@ -395,8 +405,8 @@ visitor.prototype.visitOutputList = function(ctx){
 
   var msg = ""
   for(var i = 0; i < ctx.getChildCount(); i+=2) {
+    //console.log(ctx.getText())
     var temp = this.visit(ctx.getChild(i))
-    //console.log(temp)
     msg += temp
   }
   // if constant, loop through each; var msg=""
@@ -415,8 +425,10 @@ visitor.prototype.visitConstant = function(ctx) {
   if(ctx.getChild(0).constructor.name == "ExpressionContext")
     return this.visit(ctx.expression())
   if(ctx.getChild(0).constructor.name == "VariableContext") {
-    var varSymbol = this.visit(ctx.variable())
-    return varSymbol.value
+    var txt = this.visit(ctx.variable())
+    //console.log(txt)
+    //var varSymbol = 
+    return txt.value
   } 
   if(ctx.getChild(0).constructor.name == "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
@@ -428,6 +440,41 @@ visitor.prototype.visitConstant = function(ctx) {
 
 visitor.prototype.visitReadln = function(ctx){
   var variables = this.visit(ctx.identifierList())
+  var line = ctx.start.line;
+  var error
+  var errorMessage = ''
+  for(var x in variables) {
+    var varSymbol = this.scope.lookup(variables[x] + '');
+    var temp = readlineSync.question('')
+    var varType = varSymbol.type.name
+    if(temp.includes('\'')) {
+      if(temp.length == 3) {
+        if(varType !== 'STRING' && varType !== 'CHAR') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable at line ${line}`
+        }
+      } else {
+        if(varType !== 'STRING') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable at line ${line}`
+        }
+      }
+    } else if(!isNaN(temp)) {
+      if(varType !== 'INTEGER') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable at line ${line}`
+      }
+    } else if(temp == true || temp == false || temp == 'true' || temp == 'false'){
+      if(varType !== 'BOOLEAN') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable at line ${line}`
+      }
+    }
+
+    if(error)
+      throw new Error(errorMessage)
+    else varSymbol.value = temp
+  }
   // loop through all and lookup symbol of each variable
   //https://flaviocopes.com/node-input-from-cli/ -> use for input
   // check if match yung data types 
@@ -437,37 +484,27 @@ visitor.prototype.visitReadln = function(ctx){
 
 visitor.prototype.visitFunctionDesignator = function(ctx){
   for(var i = 0; i < ctx.getChildCount(); i++) {
-    console.log(`function designator ${ctx.getChild(i).getText()}`);
+   //console.log(`function designator ${ctx.getChild(i).getText()}`);
   }
 
   var funcName = ctx.getChild(0).getText();
-  var params = ctx.getChild(2).getText().split(',');
+  var params = this.visit(ctx.parameterList())[0]
   var funcSymbol = this.scope.lookup(funcName);
 
-  if(!funcSymbol) {
-    var line = ctx.start.line;
-    throw new Error(`Variable not declared '${funcName}' at line ${line}`);
-  }
-
-  var funcParams = funcSymbol.getParams();
-
+  var funcParams = funcSymbol.params;
   for(var i = 0; i < params.length; i++) {
     params[i] = this.scope.lookup(params[i]);
     
-    if(!params[i]) {
-      var line = ctx.start.line;
-      throw new Error(`Variable not declared '${params[i].name}' at line ${line}`);
-    }
 
     funcParams[i].value = params[i].value;
   }
-
+  this.scope = symbolTables.get(funcName)
   this.visit(funcSymbol.ctx);
-
+  this.scope = this.scope.enclosingScope
   var returnVal = this.scope.lookup(funcName);
   
   if(returnVal) {
-    console.log(`Return ${returnVal.value}`);
+   // console.log(`Return ${returnVal.value}`);
     return returnVal.value;
   }
   
@@ -495,8 +532,9 @@ visitor.prototype.visitProcedureStatement = function(ctx){
 
     procParams[i].value = params[i].value;
   }
-
+  this.scope = symbolTables.get(procName)
   this.visit(procSymbol.ctx);
+  this.scope = this.scope.enclosingScope
 };
 
 visitor.prototype.visitForStatement = function(ctx){
@@ -546,6 +584,16 @@ visitor.prototype.visitIfStatement = function(ctx){
 
 visitor.prototype.visitUnsignedNumber = function(ctx) {
   return parseInt(ctx.getText())
+}
+
+visitor.prototype.visitParameterList = function(ctx) {
+  var variables =[];
+  for(var i = 0; i < ctx.getChildCount(); i+=2) {
+    var temp = ctx.getChild(i).getText()
+      variables.push(temp)
+  }
+
+  return variables
 }
 
 exports.interpreterVisitor = visitor;

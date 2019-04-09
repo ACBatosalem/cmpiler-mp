@@ -25,9 +25,9 @@ var main = function(input) {
     var tree = parser.program();
     //console.log(tree.toStringTree(parser.ruleNames));
 
-    // var printer = new PascalVisitorImpl.pascalVisitorImpl();
-    // printer.visitProgram(tree);
-    // analyzer.visit(tree);
+    var printer = new PascalVisitorImpl.pascalVisitorImpl();
+    printer.visitProgram(tree);
+    //analyzer.visit(tree);
 
     var aast = new InterpreterVisitor.interpreterVisitor();
     aast.visitProgram(tree);
