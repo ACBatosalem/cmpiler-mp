@@ -363,7 +363,7 @@ repetetiveStatement
 
 forStatement: FOR identifier ASSIGN forList DO statement;
 
-forList: initialValue TO finalValue;
+forList: initialValue (TO | DOWNTO) finalValue;
 
 initialValue: expression;
 
@@ -402,6 +402,7 @@ CHAR: C H A R;
 CONST: C O N S T;
 DIV: D I V;
 DO: D O;
+DOWNTO: D O W N T O;
 ELSE: E L S E;
 END: E N D;
 FOR: F O R;

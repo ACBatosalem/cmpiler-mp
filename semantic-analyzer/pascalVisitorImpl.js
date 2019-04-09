@@ -462,6 +462,8 @@ visitor.prototype.visitFunctionDesignator = function(ctx) {
   var func = this.visit(ctx.variable())
   var funcParams = func.params
   var parameters = this.visit(ctx.parameterList())[0]
+  if(parameters == undefined)
+    parameters = []
   // console.log("GRRR")
 
   // console.log(funcParams)
@@ -522,9 +524,11 @@ visitor.prototype.visitProcedureStatement = function(ctx) {
   var proc = this.visit(ctx.variable())
   var procParams = proc.params
   var parameters = this.visit(ctx.parameterList())[0]
+  if(parameters == undefined)
+    parameters = []
   // console.log("GRRR")
 
-  // console.log(funcParams)
+  // console.log(procParams)
   // console.log("GRRR!!!")
   // console.log(parameters)
   var error = false

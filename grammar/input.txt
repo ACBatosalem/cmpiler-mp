@@ -1,21 +1,14 @@
-program MAIN;
-var X, Y: integer;
-a,b:char;
-function hello(x:integer; a:integer): char;
-begin
-   write('luh');
-   writeln(x);
-   hello:='a';
-end;
+program cmpilerhw;
 
-Begin {MAIN}
-   X:=5;
-   Y:=10;
-   a:='h';
-   b:= 'a';
-   a := a+b;
-   a:=hello(X,Y);
-   //readln(a);
-   writeln(a);
+var
+   a,b: integer;
+
+begin
+   for a := 69  to 71 do
    
-End. {MAIN}
+   begin
+      writeln('owo: ',a);
+      for b := 1  to 4 do
+         writeln('wa: ',b);
+   end;
+end.

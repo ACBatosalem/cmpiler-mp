@@ -108,12 +108,17 @@ visitor.prototype.visitVariable = function(ctx) {
   return varSymbol
 };
 
+visitor.prototype.visitVariableDeclarationPart = function(ctx) {
+  console.log("wtf"+ctx.start.line)
+  this.visitChildren(ctx)
+};
+
 visitor.prototype.visitVariableDeclaration = function(ctx) {
   //console.log("var")
   var variables = this.visit(ctx.identifierList())
   //console.log(variables)
   var type = this.visit(ctx.type())
-  //console.log(type)
+  console.log(type)
 
   var varType = type.type != undefined? type.type : type
     const typeSymbol = this.scope.lookup(varType.toUpperCase());
@@ -309,7 +314,8 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
   else if (operation === "-")
     return operand1 - operand2
   else if (operation.toUpperCase() === "OR"){
-    // di ko pa alam paano to HAHA
+    if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
+      return operand1 || operand2
   }
 };
 
@@ -328,7 +334,8 @@ visitor.prototype.visitTerm = function(ctx) {
   else if (operation.toUpperCase() === "MOD")
     return operand1 % operand2
   else if (operation.toUpperCase() === "AND"){
-    // di ko pa alam paano to HAHA
+    if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
+      return operand1 && operand2
   }
 };
 
@@ -356,9 +363,13 @@ visitor.prototype.visitSignedFactor = function(ctx){
 visitor.prototype.visitFactor = function(ctx){
   // insert operation for NOT
   if(ctx.getChild(0).constructor.name === "TerminalNodeImpl"
-  && ctx.getChildCount() == 2)
-    return this.visit(ctx.factor())
-  if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
+  && ctx.getChildCount() == 2){
+    var temp = this.visit(ctx.factor())
+    if(typeof temp === 'boolean')
+      return !temp
+    else temp 
+    // not sure if error ba dapat to
+  }if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
   if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"
   || ctx.getChild(0).constructor.name === "BoolContext"){
@@ -380,9 +391,8 @@ visitor.prototype.visitFactor = function(ctx){
 
 
 visitor.prototype.visitWriteln = function(ctx){
-  //not sure if enough na yung console.log lang or need \n
   if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
-    console.log("\n")
+  process.stdout.write("\n")
   else {
     //console.log("WRITELN")
     
@@ -405,19 +415,10 @@ visitor.prototype.visitOutputList = function(ctx){
 
   var msg = ""
   for(var i = 0; i < ctx.getChildCount(); i+=2) {
-    //console.log(ctx.getText())
     var temp = this.visit(ctx.getChild(i))
-    msg += temp
+    msg += temp.toString().replace(/\'/g,'')
   }
-  // if constant, loop through each; var msg=""
-  // if variable, get value (msg+=value)
-  // else, getText() (msg+=getText())
-  // console.log(msg)
   return msg
-  //else
-  //console.log(this.visit(ctx.functionDesignator()))
-
-  // if sasama sa constant, include lang yung funcDesignator sa loop
 };
 
 visitor.prototype.visitConstant = function(ctx) {
@@ -492,11 +493,11 @@ visitor.prototype.visitFunctionDesignator = function(ctx){
   var funcSymbol = this.scope.lookup(funcName);
 
   var funcParams = funcSymbol.params;
-  for(var i = 0; i < params.length; i++) {
+  for(var i = 0; i < funcParams.length; i++) {
     params[i] = this.scope.lookup(params[i]);
-    
-
-    funcParams[i].value = params[i].value;
+    if(!params[i]) {
+      funcParams[i].value = params[i]
+    } else funcParams[i].value = params[i].value;
   }
   this.scope = symbolTables.get(funcName)
   this.visit(funcSymbol.ctx);
@@ -512,7 +513,7 @@ visitor.prototype.visitFunctionDesignator = function(ctx){
 
 visitor.prototype.visitProcedureStatement = function(ctx){
   var procName = ctx.getChild(0).getText();
-  var params = ctx.getChild(2).getText().split(',');
+  var params = this.visit(ctx.parameterList())[0]
   var procSymbol = this.scope.lookup(procName);
 
   if(!procSymbol) {
@@ -522,15 +523,12 @@ visitor.prototype.visitProcedureStatement = function(ctx){
 
   var procParams = procSymbol.getParams();
 
-  for(var i = 0; i < params.length; i++) {
+  for(var i = 0; i < procParams.length; i++) {
     params[i] = this.scope.lookup(params[i]);
     
     if(!params[i]) {
-      var line = ctx.start.line;
-      throw new Error(`Variable not declared '${params[i].name}' at line ${line}`);
-    }
-
-    procParams[i].value = params[i].value;
+      procParams[i].value = params[i]
+    } else procParams[i].value = params[i].value;
   }
   this.scope = symbolTables.get(procName)
   this.visit(procSymbol.ctx);
@@ -547,17 +545,26 @@ visitor.prototype.visitForStatement = function(ctx){
   }
 
   var startIndex = parseInt(ctx.getChild(3).getChild(0).getText());
+  var direction = ctx.getChild(3).getChild(1).getText().toUpperCase();
   var endIndex = parseInt(ctx.getChild(3).getChild(2).getText());
-
   if(!isNaN(startIndex) && !isNaN(endIndex)) {
-    if(startIndex <= endIndex) {
+    if(startIndex <= endIndex && direction === "TO") {
       for(var i = startIndex; i < endIndex; i++) {
         // execute statements
+        varSymbol.value = i;
         this.visit(ctx.statement());
       }
 
       varSymbol.value = endIndex;
-    } else {
+    } else if(startIndex >= endIndex && direction === "DOWNTO") {
+      for(var i = startIndex; i > endIndex; i--) {
+        // execute statements
+        varSymbol.value = i;
+        this.visit(ctx.statement());
+      }
+
+      varSymbol.value = startIndex;
+    }else {
       var line = ctx.start.line;
       throw new Error(`Index out of bounds ${startIndex} at line ${line}`);
     }

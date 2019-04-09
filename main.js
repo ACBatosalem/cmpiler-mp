@@ -43,6 +43,6 @@ var main = function(input) {
     return result;*/
 }
 
-var input = fs.readFileSync("grammar/input.txt").toString()
+var input = fs.readFileSync("grammar/inputfiles/input.txt").toString()
 
 main(input)

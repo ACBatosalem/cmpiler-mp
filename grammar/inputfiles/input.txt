@@ -4,6 +4,11 @@ PROGRAM MAIN;
 [/] char init
 [/] string init
 [/] constant init}
+const
+  MX = 40;
+  H1 = 'hello';
+  Ca2 = 'Q';
+  b2 = false;
 VAR
   number : integer;
   a, b   : integer;
@@ -12,11 +17,7 @@ VAR
   chr    : char;
   stmt   : string;
 
-const
-  MX = 40;
-  H1 = 'hello';
-  Ca2 = 'Q';
-  b2 = false;
+
   
   //error could be a@k
 
