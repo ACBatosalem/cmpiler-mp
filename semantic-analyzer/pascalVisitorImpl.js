@@ -104,7 +104,8 @@ visitor.prototype.visitVariable = function(ctx) {
   var varName = this.visit(ctx.identifier());
   var varSymbol = this.scope.lookup(varName + '');
   if(!varSymbol) {
-    throw new Error(`Variable not declared ${varName}`);
+    var line = ctx.start.line;
+    throw new Error(`Variable not declared '${varName}' at line ${line}`);
   }
   return varSymbol
 };
@@ -121,9 +122,11 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
     for(x in variables) {
       var varName = variables[x]
       //console.log(this.scope.lookup(varName, true))
-      if(this.scope.lookup(varName, true))
-        throw new Error(`Duplicate declaration of ${varName}`);
+      if(this.scope.lookup(varName, true)) {
+        var line = ctx.start.line;
+        throw new Error(`Duplicate declaration of '${varName}' at line ${line}`);
         //console.log("error: duplicate")
+      }
       else if(type.indices == undefined){
         var varSymbol = new VariableSymbol(varName, typeSymbol);
         this.scope.define(varSymbol)
@@ -150,8 +153,10 @@ visitor.prototype.visitIdentifierList = function(ctx) {
     if(temp != undefined && !isReserved)
       variables.push(temp)
 
-    if(isReserved)
-      throw new Error("SEMANTIC ERROR Keyword error: cannot use reserved keyword " + temp + " as an identifier");
+    if(isReserved) {
+      var line = ctx.start.line;
+      throw new Error("SEMANTIC ERROR Keyword error: cannot use reserved keyword " + temp + " as an identifier at line " + line);
+    }
   }
   
   return variables;
@@ -219,9 +224,11 @@ visitor.prototype.visitParameterGroup = function(ctx) {
   for(x in variables) {
     var varName = variables[x]
     //console.log(this.scope.lookup(varName, true))
-    if(this.scope.lookup(varName, true))
-      throw new Error(`Duplicate declaration of ${varName}`);
+    if(this.scope.lookup(varName, true)) {
+      var line = ctx.start.line;
+      throw new Error(`Duplicate declaration of '${varName}' at line ${line}`);
       // console.log("error: duplicate")
+    }
     else {
       var varSymbol = new VariableSymbol(varName, typeSymbol);
       this.scope.define(varSymbol)
@@ -233,8 +240,11 @@ visitor.prototype.visitParameterGroup = function(ctx) {
 
 visitor.prototype.visitConstantDefinition = function(ctx) {
   var constName = this.visit(ctx.identifier())
-  if(this.scope.lookup(constName, true))
-      throw new Error(`Duplicate declaration of ${constName}`);
+  if(this.scope.lookup(constName, true)) {
+    var line = ctx.start.line;
+    throw new Error(`Duplicate declaration of '${constName}' at line ${line}`);
+  }
+      
   var typeSymbol
   var value = ctx.getChild(2).getText()
   if(value.includes('\'')) {
@@ -260,10 +270,14 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
   //console.log(varSymbol)
   //console.log(this.scope.scopeName)
   if(varSymbol.isConstant != undefined)
-    if(varSymbol.isConstant)
-      throw new Error(`Cannot assign to constant variable`)
-  if(varSymbol.type == undefined)
-      throw new Error(`Procedure does not return a value`)
+    if(varSymbol.isConstant) {
+      var line = ctx.start.line;
+      throw new Error(`Cannot assign to constant variable at line ${line}`)
+    }
+  if(varSymbol.type == undefined) {
+    var line = ctx.start.line;
+    throw new Error(`Procedure does not return a value at line ${line}`)
+  }
   var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
   
   // console.log("AYAW")
@@ -276,43 +290,44 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
 
   for(x in value) {
     var temp = value[x]
+    var line = ctx.start.line;
     if(temp.includes('\'')) {
       if(temp.length == 3) {
         if(varType !== 'STRING' && varType !== 'CHAR') {
             error = true
-            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable`
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable at line ${line}`
         }
       } else {
         if(varType !== 'STRING') {
             error = true
-            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable`
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable at line ${line}`
         }
       }
     } else if(!isNaN(temp)) {
       if(varType !== 'INTEGER') {
         error = true
-        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable`
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable at line ${line}`
       }
     } else if(temp == true || temp == false || temp == 'true' || temp == 'false'){
       if(varType !== 'BOOLEAN') {
         error = true
-        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable`
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable at line ${line}`
       }
     } else {
       var varTemp = this.scope.lookup(temp)
       if(!varTemp) {
         error = true
-        errorMessage = `!!Variable not declared ${temp}`
+        errorMessage = `!!Variable not declared ${temp} at line ${line}`
       }
       else if(varType !== varTemp.type.name){
         error = true
-        errorMessage = `Data type mismatch: ${varSymbol.name} and ${temp}`
+        errorMessage = `Data type mismatch: ${varSymbol.name} and ${temp} at line ${line}`
       }
 
     }
     if(error) {
         if(isReturn)
-            throw new Error(`Return type mismatch: function ${funcName}`)
+            throw new Error(`Return type mismatch: function ${funcName} at line ${line}`)
         throw new Error(errorMessage)
     }
   }
@@ -364,43 +379,46 @@ visitor.prototype.visitFunctionDesignator = function(ctx) {
   console.log("GRRR!!!")
   console.log(parameters)
   var error = false
-  if(funcParams.length != parameters.length)
-    throw new Error (`ERROR: parameter length does not match`);
+  if(funcParams.length != parameters.length) {
+    var line = ctx.start.line;
+    throw new Error (`ERROR: parameter length does not match at line ${line}`);
+  }
 
   for(x in parameters) {
     var temp = parameters[x]
     var varType = funcParams[x].type.name
+    var line = ctx.start.line;
     if(temp.includes('\'')) {
       if(temp.length == 3) {
         if(varType !== 'STRING' && varType !== 'CHAR') {
             error = true
-            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable`
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable at line ${line}`
         }
       } else {
         if(varType !== 'STRING') {
             error = true
-            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable`
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable at line ${line}`
         }
       }
     } else if(!isNaN(temp)) {
       if(varType !== 'INTEGER') {
         error = true
-        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable`
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable at line ${line}`
       }
     } else if(temp == true || temp == false){
       if(varType !== 'BOOLEAN') {
         error = true
-        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable`
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable at line ${line}`
       }
     } else {
       var varTemp = this.scope.lookup(temp)
       if(!varTemp) {
         error = true
-        errorMessage = `!!Variable not declared ${temp}`
+        errorMessage = `!!Variable not declared ${temp} at line ${line}`
       }
       else if(varType !== varTemp.type.name){
         error = true
-        errorMessage = `!!Data type mismatch: ${funcParams[x].name} and ${temp}`
+        errorMessage = `!!Data type mismatch: ${funcParams[x].name} and ${temp} at line ${line}`
       }
 
     }
@@ -423,8 +441,10 @@ visitor.prototype.visitParameterList = function(ctx) {
     if(temp != undefined && !isReserved)
       variables.push(temp)
 
-    if(isReserved)
+    if(isReserved) {
+      var line = ctx.start.line;
       throw new Error (`ERROR: ${temp} is a reserved keyword`);
+    }
   }
 
   return variables
@@ -435,11 +455,13 @@ visitor.prototype.visitForStatement = function(ctx) {
   var id = this.scope.lookup(ctx.identifier().getText());
 
   if(!id) {
-    throw new Error(`Variable not declared ${varName}`);
+    var line = ctx.start.line;
+    throw new Error(`Variable not declared ${varName} at line ${line}`);
   } 
 
   if(id.type.name !== 'INTEGER') {
-    throw new Error(`Variable for loop index is not an integer`);
+    var line = ctx.start.line;
+    throw new Error(`Variable for loop index is not an integer at line ${line}`);
   }
 
   this.visit(ctx.forList());
@@ -455,7 +477,8 @@ visitor.prototype.visitForList = function(ctx) {
   if(!isNaN(startIndex) && !isNaN(endIndex)) {
     
   } else {
-    throw new Error('Starting and/or ending index should be an integer');
+    var line = ctx.start.line;
+    throw new Error(`Starting and/or ending index should be an integer at line ${line}`);
   }
 };
 
@@ -477,8 +500,10 @@ visitor.prototype.visitTypeList = function(ctx) {
 // Visit a parse tree produced by pascalParser#componentType.
 visitor.prototype.visitComponentType = function(ctx) {
   // TODO error for non-integer arrays
-  if(ctx.getText().toUpperCase() !== "INTEGER")
-    throw new Error(`Cannot instantiate a non-integer array`);
+  if(ctx.getText().toUpperCase() !== "INTEGER") {
+    var line = ctx.start.line;
+    throw new Error(`Cannot instantiate a non-integer array at line ${line}`);
+  }
 
   return ctx.getText();
 };
