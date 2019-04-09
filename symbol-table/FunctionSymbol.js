@@ -3,9 +3,10 @@
 const Symbol = require('./Symbol');
 
 class FunctionSymbol extends Symbol {
-    constructor(name, returnType,params = []) {
+    constructor(name, returnType,params = [], ctx) {
         super(name,returnType);
         this.params = params;
+        this.ctx = ctx;
     }
 
     getParams() {
@@ -13,11 +14,11 @@ class FunctionSymbol extends Symbol {
     }
 
     toString() {
-        return `FunctionSymbol(${this.name}, ${this.params}, ${this.returnType})`;
+        return `FunctionSymbol(${this.name}, ${this.params}, ${this.returnType}, ${this.ctx})`;
     }
 
-    static create(name, returnType, params) {
-        return new this(name, returnType, params);
+    static create(name, returnType, params, ctx) {
+        return new this(name, returnType, params, ctx);
     }
 }
 

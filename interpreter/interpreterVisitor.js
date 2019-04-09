@@ -156,17 +156,23 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
   //insert parameters chuchu
   var parameters = this.visit(ctx.formalParameterList())
   procedureSymbol.params = parameters
+  procedureSymbol.ctx = ctx
   this.visit(ctx.block())
-  console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
-
 };
 
 visitor.prototype.visitFormalParameterList = function(ctx) {
   var parameters = []
-  for(var i = 1; i < ctx.getChildCount(); i+=2) {
-    parameters.push(this.visit(ctx.getChild(i))[0])
-  }
+  if(ctx.getChildCount() != 2)
+    for(var i = 1; i < ctx.getChildCount(); i+=2) {
+      var temp = this.visit(ctx.getChild(i))
+      if(Array.isArray(temp)) {
+        for (var x in temp)
+          parameters.push(temp[x])
+      }
+      else
+        parameters.push(temp)
+    }
   return parameters
 }
 
@@ -181,6 +187,8 @@ visitor.prototype.visitFunctionDeclaration = function(ctx) {
 
   var parameters = this.visit(ctx.formalParameterList())
   funcSymbol.params = parameters
+  funcSymbol.returnType = funcReturn;
+  funcSymbol.ctx = ctx;
   this.visit(ctx.block())
   console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
@@ -247,6 +255,7 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
   var isReturn = this.scope.scopeName===varSymbol.name?true:false
 
   varSymbol.value = value
+
   if(isReturn)
     return value;
 };
@@ -274,7 +283,7 @@ visitor.prototype.visitExpression = function(ctx) {
   
 };
 
-visitor.prototype.visitRelationalOperator = function(ctx){
+visitor.prototype.visitRelationaloperator = function(ctx){
   return ctx.getText()
 };
 
@@ -323,61 +332,98 @@ visitor.prototype.visitMultiplicativeoperator = function(ctx){
 
 visitor.prototype.visitSignedFactor = function(ctx){
   if(ctx.getChildCount() == 2)
-    if(ctx.getChild(0).getText() === "-")
-      return this.visit(ctx.factor())*-1
+    if(ctx.getChild(0).getText() === "-"){
+      
+      var line = ctx.start.line;
+      var factor = this.visit(ctx.factor())
+      if(Number.isNaN(factor))
+        throw new Error(`Cannot negate a non-number at line ${line}`)
+      else return factor
+
+    }
   return this.visit(ctx.factor())  
 };
 
 visitor.prototype.visitFactor = function(ctx){
-
   // insert operation for NOT
-  if(ctx.getChild(0).constructor.name === "TerminalNodeImpl")
+  if(ctx.getChild(0).constructor.name === "TerminalNodeImpl"
+  && ctx.getChildCount() == 2)
     return this.visit(ctx.factor())
   if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
   if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"
   || ctx.getChild(0).constructor.name === "BoolContext")
-    return ctx.getText()
+    return isNaN(ctx.getText())?ctx.getText():parseInt(ctx.getText())
   if(ctx.getChild(0).constructor.name === "VariableContext"){
     var variable = this.visit(ctx.variable())
     return variable.type.name === "INTEGER"
     ? parseInt(variable.value) : variable.value
   }
-  else 
+  
+  else {
+    //console.log("OOF")
     return this.visit(ctx.expression())
+  }
 };
 
 
-visitor.prototype.visitWriteln = function(ctx){
-  //not sure if enough na yung console.log lang or need \n
-  if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
-    console.log("\n")
-};
 
 visitor.prototype.visitWriteln = function(ctx){
+  console.log('writeln hereee');
   //not sure if enough na yung console.log lang or need \n
   if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
     console.log("\n")
-  else ctx.outputList();
+  else {
+    //console.log("WRITELN")
+    
+    
+    process.stdout.write(this.visit(ctx.outputList())+"\n");
+  }
 };
 
 visitor.prototype.visitWrite = function(ctx){
   //para no newline
   if(ctx.getChildCount() == 1 || ctx.getChildCount() == 3)
-    process.stdout.write("\n")
-  else ctx.outputList();
+    process.stdout.write("")
+  else {
+    //console.log("WRITE")
+    process.stdout.write(this.visit(ctx.outputList()));
+  }
 };
 
 visitor.prototype.visitOutputList = function(ctx){
+
+  var msg = ""
+  for(var i = 0; i < ctx.getChildCount(); i+=2) {
+    var temp = this.visit(ctx.getChild(i))
+    //console.log(temp)
+    msg += temp
+  }
   // if constant, loop through each; var msg=""
   // if variable, get value (msg+=value)
   // else, getText() (msg+=getText())
   // console.log(msg)
-
+  return msg
   //else
-  console.log(this.visit(ctx.visitFunctionDesignator()))
+  //console.log(this.visit(ctx.functionDesignator()))
 
   // if sasama sa constant, include lang yung funcDesignator sa loop
+};
+
+visitor.prototype.visitConstant = function(ctx) {
+ //console.log("here")
+  if(ctx.getChild(0).constructor.name == "ExpressionContext")
+    return this.visit(ctx.expression())
+  if(ctx.getChild(0).constructor.name == "VariableContext") {
+    var varSymbol = this.visit(ctx.variable())
+    return varSymbol.value
+  } 
+  if(ctx.getChild(0).constructor.name == "FunctionDesignatorContext")
+    return this.visit(ctx.functionDesignator())
+  if(ctx.getChild(0).constructor.name == "SignContext"){
+    // negate chuchu
+  } 
+  else return ctx.getText()
 };
 
 visitor.prototype.visitReadln = function(ctx){
@@ -389,17 +435,68 @@ visitor.prototype.visitReadln = function(ctx){
 
 };
 
-
 visitor.prototype.visitFunctionDesignator = function(ctx){
-  // assign values to the parameters
-  // loop through each statement in the function
-  // if equal to function name yung variable, return that value
+  for(var i = 0; i < ctx.getChildCount(); i++) {
+    console.log(`function designator ${ctx.getChild(i).getText()}`);
+  }
+
+  var funcName = ctx.getChild(0).getText();
+  var params = ctx.getChild(2).getText().split(',');
+  var funcSymbol = this.scope.lookup(funcName);
+
+  if(!funcSymbol) {
+    var line = ctx.start.line;
+    throw new Error(`Variable not declared '${funcName}' at line ${line}`);
+  }
+
+  var funcParams = funcSymbol.getParams();
+
+  for(var i = 0; i < params.length; i++) {
+    params[i] = this.scope.lookup(params[i]);
+    
+    if(!params[i]) {
+      var line = ctx.start.line;
+      throw new Error(`Variable not declared '${params[i].name}' at line ${line}`);
+    }
+
+    funcParams[i].value = params[i].value;
+  }
+
+  this.visit(funcSymbol.ctx);
+
+  var returnVal = this.scope.lookup(funcName);
+  
+  if(returnVal) {
+    console.log(`Return ${returnVal.value}`);
+    return returnVal.value;
+  }
+  
 };
 
 visitor.prototype.visitProcedureStatement = function(ctx){
-  // assign values to the parameters
-  // loop through each statement in the function
-  
+  var procName = ctx.getChild(0).getText();
+  var params = ctx.getChild(2).getText().split(',');
+  var procSymbol = this.scope.lookup(procName);
+
+  if(!procSymbol) {
+    var line = ctx.start.line;
+    throw new Error(`Variable not declared '${procName}' at line ${line}`);
+  }
+
+  var procParams = procSymbol.getParams();
+
+  for(var i = 0; i < params.length; i++) {
+    params[i] = this.scope.lookup(params[i]);
+    
+    if(!params[i]) {
+      var line = ctx.start.line;
+      throw new Error(`Variable not declared '${params[i].name}' at line ${line}`);
+    }
+
+    procParams[i].value = params[i].value;
+  }
+
+  this.visit(procSymbol.ctx);
 };
 
 visitor.prototype.visitForStatement = function(ctx){
@@ -446,5 +543,9 @@ visitor.prototype.visitIfStatement = function(ctx){
     this.visit(ctx.getChild(5));
   }
 };
+
+visitor.prototype.visitUnsignedNumber = function(ctx) {
+  return parseInt(ctx.getText())
+}
 
 exports.interpreterVisitor = visitor;

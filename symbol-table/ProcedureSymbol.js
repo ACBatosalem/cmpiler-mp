@@ -3,9 +3,10 @@
 const Symbol = require('./Symbol');
 
 class ProcedureSymbol extends Symbol {
-    constructor(name, params = []) {
+    constructor(name, params = [], ctx) {
         super(name);
         this.params = params;
+        this.ctx = ctx;
     }
 
     getParams() {
@@ -13,11 +14,11 @@ class ProcedureSymbol extends Symbol {
     }
 
     toString() {
-        return `ProcedureSymbol(${this.name}, ${this.params})`;
+        return `ProcedureSymbol(${this.name}, ${this.params} ${this.ctx})`;
     }
 
-    static create(name, params) {
-        return new this(name, params);
+    static create(name, params, ctx) {
+        return new this(name, params, ctx);
     }
 }
 
