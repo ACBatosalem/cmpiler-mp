@@ -65,7 +65,7 @@ visitor.prototype = Object.create(PascalVisitor.pascalVisitor.prototype);
 visitor.prototype.visitProgram = function(ctx) {
     this.scope = new SymbolTable('global', 1, this.scope);
     this.visit(ctx.block());
-    console.log(this.scope.toString())
+   // console.log(this.scope.toString())
     this.scope = this.scope.enclosingScope;
     
   };
@@ -173,21 +173,29 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
     this.scope.scopeLevel+1, this.scope)
 
   //insert parameters chuchu
+  try {
   var parameters = this.visit(ctx.formalParameterList())
   //console.log(parameters)
-  procedureSymbol.params = parameters[0]
+  procedureSymbol.params = parameters
+  } catch(e) {}
   this.visit(ctx.block())
-  console.log(this.scope.toString())
+ // console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
 
 };
 
 visitor.prototype.visitFormalParameterList = function(ctx) {
   var parameters = []
-  console.log(this.scope.scopeName)
+ // console.log(this.scope.scopeName)
   if(ctx.getChildCount() != 2)
     for(var i = 1; i < ctx.getChildCount(); i+=2) {
-      parameters.push(this.visit(ctx.getChild(i)))
+      var temp = this.visit(ctx.getChild(i))
+      if(Array.isArray(temp)) {
+        for (var x in temp)
+          parameters.push(temp[x])
+      }
+      else
+        parameters.push(temp)
     }
   return parameters
 }
@@ -200,12 +208,14 @@ visitor.prototype.visitFunctionDeclaration = function(ctx) {
   this.scope.define(funcSymbol)
   this.scope = new SymbolTable(funcName, 
     this.scope.scopeLevel+1, this.scope)
-  console.log(funcName)
+  //console.log(funcName)
   //insert parameters chuchu
-  var parameters = this.visit(ctx.formalParameterList())
-  funcSymbol.params = parameters[0]
+  try {
+    var parameters = this.visit(ctx.formalParameterList())
+    funcSymbol.params = parameters
+  } catch(e){}
   this.visit(ctx.block())
-  console.log(this.scope.toString())
+  //console.log(this.scope.toString())
   this.scope = this.scope.enclosingScope;
 
 };
@@ -359,7 +369,8 @@ visitor.prototype.visitSignedFactor = function(ctx){
 };
 
 visitor.prototype.visitFactor = function(ctx){
-  if(ctx.getChild(0).constructor.name === "TerminalNodeImpl")
+  if(ctx.getChild(0).constructor.name === "TerminalNodeImpl"
+  && ctx.getChildCount() == 2)
     return this.visit(ctx.factor())
   if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
@@ -373,11 +384,11 @@ visitor.prototype.visitFunctionDesignator = function(ctx) {
   var func = this.visit(ctx.variable())
   var funcParams = func.params
   var parameters = this.visit(ctx.parameterList())[0]
-  console.log("GRRR")
+  // console.log("GRRR")
 
-  console.log(funcParams)
-  console.log("GRRR!!!")
-  console.log(parameters)
+  // console.log(funcParams)
+  // console.log("GRRR!!!")
+  // console.log(parameters)
   var error = false
   if(funcParams.length != parameters.length) {
     var line = ctx.start.line;
@@ -452,7 +463,8 @@ visitor.prototype.visitParameterList = function(ctx) {
 
 // Visit a parse tree produced by pascalParser#forStatement.
 visitor.prototype.visitForStatement = function(ctx) {
-  var id = this.scope.lookup(ctx.identifier().getText());
+  var varName = ctx.identifier().getText()
+  var id = this.scope.lookup(varName);
 
   if(!id) {
     var line = ctx.start.line;

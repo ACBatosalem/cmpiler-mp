@@ -72,23 +72,23 @@ PascalErrorListener.prototype.syntaxError = function(recognizer, offendingSymbol
     
 	if(msg.includes("mismatched")) { 
 		if(KEYWORDS.includes((this.symbol).toString().toUpperCase())) {
-			throw new Error("SEMANTIC ERROR at [COLUMN " + column + "] Keyword error: cannot use reserved keyword '" + this.symbol + "' as an identifier\n");
+			throw new Error("SEMANTIC ERROR at [LINE-COLUMN " + line + "-"+ column +"] Keyword error: cannot use reserved keyword '" + this.symbol + "' as an identifier\n");
 			// process.stdout.write();
 		} else {
-			throw new Error("SYNTAX ERROR at [COLUMN " + column + "] Mismatched input: " + msg + "\n");
+			throw new Error("SYNTAX ERROR at [LINE-COLUMN " + line + "-"+ column +"] Mismatched input: " + msg + "\n");
 			// process.stdout.write("SYNTAX ERROR at [COLUMN " + column + "] Mismatched input: " + msg + "\n");
 		}
     } else if (msg.includes("missing")) {
-		throw new Error("SYNTAX ERROR at [COLUMN " + column + "] Missing syntax: " + msg + "\n");
+		throw new Error("SYNTAX ERROR at [LINE-COLUMN " + line + "-"+ column +"] Missing syntax: " + msg + "\n");
         // process.stdout.write("SYNTAX ERROR at [COLUMN " + column + "] Missing syntax: " + msg + "\n");
     } else if (msg.includes("expecting")) {
-		throw new Error(" SYNTAX ERROR at [COLUMN " + column + "] Expecting syntax: " + msg + "\n");
+		throw new Error(" SYNTAX ERROR at [LINE-COLUMN " + line + "-"+ column +"] Expecting syntax: " + msg + "\n");
         // process.stdout.write(" SYNTAX ERROR at [COLUMN " + column + "] Expecting syntax: " + msg + "\n");
     } else if(msg.includes("token recognition error")) {
-		throw new Error("ERROR at COLUMN [" + column + "] Token recognition error: '" + msg.charAt(29) + "' is not a recognized token" + "\n");
+		throw new Error("ERROR at COLUMN [LINE-COLUMN " + line + "-"+ column +"] Token recognition error: '" + msg.charAt(29) + "' is not a recognized token" + "\n");
 		// process.stdout.write("ERROR at COLUMN [" + column + "] Token recognition error: '" + msg.charAt(29) + "' is not a recognized token" + "\n");
     } else {
-		throw new Error("ERROR at COLUMN [" + column + "]: " + msg + "\n");
+		throw new Error("ERROR at COLUMN [LINE-COLUMN " + line + "-"+ column +"]: " + msg + "\n");
         // process.stdout.write("ERROR at COLUMN [" + column + "]: " + msg + "\n"); 
     } 
 };

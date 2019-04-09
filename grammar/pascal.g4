@@ -82,6 +82,8 @@ constant
    | variable
    | sign variable
    | bool
+   | expression
+   | functionDesignator
    ;
 
 unsignedNumber
@@ -235,7 +237,7 @@ write
    ;
 
 outputList
-   : constant (COMMA constant)* | functionDesignator
+   : constant (COMMA constant)*
    ;
 
 assignmentStatement
