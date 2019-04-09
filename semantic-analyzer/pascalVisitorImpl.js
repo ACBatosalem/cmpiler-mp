@@ -288,7 +288,7 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
     var line = ctx.start.line;
     throw new Error(`Procedure does not return a value at line ${line}`)
   }
-  var value = this.visit(ctx.expression().simpleExpression()).toString().split(",")
+  var value = this.visit(ctx.expression()).toString().split(",")
   
   // console.log("AYAW")
   // console.log(value)
@@ -340,6 +340,84 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
             throw new Error(`Return type mismatch: function ${funcName} at line ${line}`)
         throw new Error(errorMessage)
     }
+  }
+};
+
+visitor.prototype.visitExpression = function(ctx) {
+  if(ctx.getChildCount() == 1)
+    return this.visit(ctx.simpleExpression())
+  else {
+    var firstSet = this.visit(ctx.simpleExpression()).toString().split(",")
+    var secondSet = this.visit(ctx.expression()).toString().split(",")
+    var line = ctx.start.line;
+    var firstFactor = firstSet[0]
+    var dataType = ''
+    if(firstFactor.includes('\''))
+      dataType = "STRING"
+    else if(!isNaN(firstFactor))
+      dataType = "INTEGER"
+    else if(firstFactor == true || firstFactor == false 
+      || firstFactor == 'true' || firstFactor == 'false')
+      dataType = "BOOLEAN"
+    else {
+      var varTemp = this.scope.lookup(firstFactor)
+      if(!varTemp) {
+        error = true
+        throw new Error(`!!Variable not declared ${firstFactor} at line ${line}`)
+      }
+      dataType = varTemp.type.name
+    }
+    
+    for(var i = 1; i < firstSet.length; i++) {
+      var temp = firstSet[i]
+      if(temp.includes('\'')) {
+        if(dataType !== "STRING" && dataType !== "CHAR")
+          throw new Error(`!Expecting ${dataType} but got a string at line ${line}`)
+      } else if(!isNaN(temp)) {
+        if(dataType !== "INTEGER")
+          throw new Error(`Expecting ${dataType} but got an integer at line ${line}`)
+      } else if(temp == true || temp == false 
+        || temp == 'true' || temp == 'false') {
+        if(dataType !== "BOOLEAN")
+        throw new Error(`Expecting ${dataType} but got a boolean at line ${line}`)
+      } else {
+        var varTemp = this.scope.lookup(temp)
+        if(!varTemp) {
+          error = true
+          throw new Error(`!!Variable not declared ${temp} at line ${line}`)
+        }
+        else if(dataType !== varTemp.type.name){
+          throw new Error(`Expecting ${dataType} but got a ${varTemp.type.name} at line ${line}`)
+        }
+      }
+    }
+
+    for(var i = 0; i < secondSet.length; i++) {
+      var temp = secondSet[i]
+      if(temp.includes('\'')) {
+        if(dataType !== "STRING" && dataType !== "CHAR")
+          throw new Error(`Expecting ${dataType} but got a string at line ${line}`)
+      } else if(!isNaN(temp)) {
+        if(dataType !== "INTEGER")
+          throw new Error(`Expecting ${dataType} but got an integer at line ${line}`)
+      } else if(temp == true || temp == false 
+        || temp == 'true' || temp == 'false') {
+        if(dataType !== "BOOLEAN")
+        throw new Error(`Expecting ${dataType} but got a boolean at line ${line}`)
+      } else {
+        var varTemp = this.scope.lookup(temp)
+        if(!varTemp) {
+          error = true
+          throw new Error(`!!Variable not declared ${temp} at line ${line}`)
+        }
+        else if(dataType !== varTemp.type.name){
+          error = true
+          throw new Error(`Expecting ${dataType} but got a ${varTemp.type.name} at line ${line}`)
+        }
+      }
+    }
+
+      return true
   }
 };
 
@@ -525,6 +603,17 @@ visitor.prototype.visitOutputList = function(ctx) {
     if(ctx.getChild(i).constructor.name === "FunctionDesignatorContext"){
       
       this.visit(ctx.functionDesignator())
+    }
+  }
+};
+
+visitor.prototype.visitReadln = function(ctx){
+  var list = this.visit(ctx.identifierList())
+  for(var x in list) {
+    var varSymbol = this.scope.lookup(list[x] + '');
+    if(!varSymbol) {
+      var line = ctx.start.line;
+      throw new Error(`Variable not declared '${list[x]}' at line ${line}`);
     }
   }
 };

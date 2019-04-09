@@ -1,25 +1,20 @@
 program MAIN;
 var X, Y: integer;
+a,b:char;
+function hello(x:integer; a:integer): char;
+begin
+   writeln(x);
+   hello:='a';
+end;
+
 Begin {MAIN}
-   // X:= 4;
-   // Y := 5*6;
-   // Z := 7+1;
-   // X:= Y+Z
    X:=5;
    Y:=10;
-
-   //for X:=1 to 5 do
-   //   begin
-   //   Y:=10;
-   //   Y:=20;
-   //   end;
-   
-   {*if X < Y then
-      Begin
-            writeln('x is less');
-            Y := 5;
-        end
-   else
-      writeln('y is less');*}
+   a:='h';
+   b:= 'a';
+   a := a+b;
+   //a:=hello(X,Y);
+   //readln(a);
+   writeln(a);
    
 End. {MAIN}

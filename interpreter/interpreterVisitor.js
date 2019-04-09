@@ -4,7 +4,7 @@ const SymbolTable = require('../symbol-table/SymbolTable.js');
 const VariableSymbol = require('../symbol-table/VariableSymbol');
 const ProcedureSymbol = require('../symbol-table/ProcedureSymbol');
 const FunctionSymbol = require('../symbol-table/FunctionSymbol');
-
+var readlineSync = require('readline-sync');
 var KEYWORDS = [
 	'AND',
 	'ARRAY',
@@ -251,6 +251,8 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
   //console.log(this.scope.scopeName)
 
   var value = this.visit(ctx.expression())
+  console.log("HUHU")
+  console.log(value)
   var isReturn = this.scope.scopeName===varSymbol.name?true:false
 
   varSymbol.value = value
@@ -276,12 +278,12 @@ visitor.prototype.visitExpression = function(ctx) {
     return operand1 > operand2
   else if (operation === "<=")
     return operand1 <= operand2
-  else if (operation === "=>")
-    return operand1 => operand2
+  else if (operation === ">=")
+    return operand1 >= operand2
   
 };
 
-visitor.prototype.visitRelationalOperator = function(ctx){
+visitor.prototype.visitRelationaloperator = function(ctx){
   return ctx.getText()
 };
 
@@ -339,7 +341,10 @@ visitor.prototype.visitSignedFactor = function(ctx){
       else return factor
 
     }
-  return this.visit(ctx.factor())  
+  var txt = this.visit(ctx.factor())  
+  console.log("AAAAAAA")
+    console.log(txt)
+  return txt
 };
 
 visitor.prototype.visitFactor = function(ctx){
@@ -350,9 +355,11 @@ visitor.prototype.visitFactor = function(ctx){
   if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
   if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"
-  || ctx.getChild(0).constructor.name === "BoolContext")
-    return Number.isNaN(ctx.getText())?ctx.getText():parseInt(ctx.getText())
-  if(ctx.getChild(0).constructor.name === "VariableContext"){
+  || ctx.getChild(0).constructor.name === "BoolContext"){
+    var txt = ctx.getText().replace(/\'/g,'')
+
+    return isNaN(txt)?txt:parseInt(txt)
+  }if(ctx.getChild(0).constructor.name === "VariableContext"){
     var variable = this.visit(ctx.variable())
     return variable.type.name === "INTEGER"
     ? parseInt(variable.value) : variable.value
@@ -428,6 +435,41 @@ visitor.prototype.visitConstant = function(ctx) {
 
 visitor.prototype.visitReadln = function(ctx){
   var variables = this.visit(ctx.identifierList())
+  var line = ctx.start.line;
+  var error
+  var errorMessage = ''
+  for(var x in variables) {
+    var varSymbol = this.scope.lookup(variables[x] + '');
+    var temp = readlineSync.question('')
+    var varType = varSymbol.type.name
+    if(temp.includes('\'')) {
+      if(temp.length == 3) {
+        if(varType !== 'STRING' && varType !== 'CHAR') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-char/string variable at line ${line}`
+        }
+      } else {
+        if(varType !== 'STRING') {
+            error = true
+            errorMessage = `Data type mismatch: Can't assign ${temp} to non-string variable at line ${line}`
+        }
+      }
+    } else if(!isNaN(temp)) {
+      if(varType !== 'INTEGER') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-int variable at line ${line}`
+      }
+    } else if(temp == true || temp == false || temp == 'true' || temp == 'false'){
+      if(varType !== 'BOOLEAN') {
+        error = true
+        errorMessage = `Data type mismatch: Can't assign ${temp} to non-boolean variable at line ${line}`
+      }
+    }
+
+    if(error)
+      throw new Error(errorMessage)
+    else varSymbol.value = temp
+  }
   // loop through all and lookup symbol of each variable
   //https://flaviocopes.com/node-input-from-cli/ -> use for input
   // check if match yung data types 
