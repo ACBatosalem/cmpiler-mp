@@ -4,6 +4,7 @@ const SymbolTable = require('../symbol-table/SymbolTable.js');
 const VariableSymbol = require('../symbol-table/VariableSymbol');
 const ProcedureSymbol = require('../symbol-table/ProcedureSymbol');
 const FunctionSymbol = require('../symbol-table/FunctionSymbol');
+const ArraySymbol = require('../symbol-table/ArraySymbol');
 var readlineSync = require('readline-sync');
 
 var symbolTables = new Map();
@@ -108,17 +109,13 @@ visitor.prototype.visitVariable = function(ctx) {
   return varSymbol
 };
 
-visitor.prototype.visitVariableDeclarationPart = function(ctx) {
-  console.log("wtf"+ctx.start.line)
-  this.visitChildren(ctx)
-};
 
 visitor.prototype.visitVariableDeclaration = function(ctx) {
   //console.log("var")
   var variables = this.visit(ctx.identifierList())
   //console.log(variables)
   var type = this.visit(ctx.type())
-  console.log(type)
+  //console.log(type)
 
   var varType = type.type != undefined? type.type : type
     const typeSymbol = this.scope.lookup(varType.toUpperCase());
@@ -602,5 +599,29 @@ visitor.prototype.visitParameterList = function(ctx) {
 
   return variables
 }
+
+visitor.prototype.visitArrayType = function(ctx) {
+
+  var indices = this.visit(ctx.typeList())
+  var type = this.visit(ctx.componentType());
+  return {"type":type, "indices":indices}
+
+};
+
+visitor.prototype.visitTypeList = function(ctx) {
+  var indices = ctx.getText().split("..");
+  return indices;
+};
+
+// Visit a parse tree produced by pascalParser#componentType.
+visitor.prototype.visitComponentType = function(ctx) {
+  // TODO error for non-integer arrays
+  if(ctx.getText().toUpperCase() !== "INTEGER") {
+    var line = ctx.start.line;
+    throw new Error(`Cannot instantiate a non-integer array at line ${line}`);
+  }
+
+  return ctx.getText();
+};
 
 exports.interpreterVisitor = visitor;
