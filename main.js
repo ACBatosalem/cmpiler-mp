@@ -27,7 +27,7 @@ var main = function(input) {
 
     // var printer = new PascalVisitorImpl.pascalVisitorImpl();
     // printer.visitProgram(tree);
-    //analyzer.visit(tree);
+    // analyzer.visit(tree);
 
     var aast = new InterpreterVisitor.interpreterVisitor();
     aast.visitProgram(tree);

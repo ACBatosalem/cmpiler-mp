@@ -113,10 +113,10 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
   //console.log(type)
 
   var varType = type.type != undefined? type.type : type
-  
     const typeSymbol = this.scope.lookup(varType.toUpperCase());
     for(x in variables) {
       var varName = variables[x]
+      console.log(varType + " " + typeSymbol + " " + varName);
       //console.log(this.scope.lookup(varName, true))
       if(this.scope.lookup(varName, true))
         throw new Error(`Duplicate declaration of ${varName}`);
@@ -237,7 +237,6 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
 };
 
 visitor.prototype.visitAssignmentStatement = function(ctx) {
-
   //include assignment for array type
   var varSymbol = this.visit(ctx.variable())
   var funcName = this.scope.scopeName
@@ -248,7 +247,6 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
   var isReturn = this.scope.scopeName===varSymbol.name?true:false
 
   varSymbol.value = value
-
   if(isReturn)
     return value;
 };
@@ -256,24 +254,28 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
 visitor.prototype.visitExpression = function(ctx) {
   if(ctx.getChildCount() == 1)
     return this.visit(ctx.simpleExpression())
-
   
   var operation = this.visit(ctx.relationaloperator())
   var operand1 = this.visit(ctx.simpleExpression())
   var operand2 = this.visit(ctx.expression())
+
   if(operation === "=")
     return operand1 == operand2
-    else if (operation === "<>")
-      return operand1 != operand2
-    else if (operation === "<")
-      return operand1 < operand2
-    else if (operation === ">")
-      return operand1 > operand2
-    else if (operation === "<=")
-      return operand1 <= operand2
-    else if (operation === "=>")
-      return operand1 => operand2
+  else if (operation === "<>")
+    return operand1 != operand2
+  else if (operation === "<")
+    return operand1 < operand2
+  else if (operation === ">")
+    return operand1 > operand2
+  else if (operation === "<=")
+    return operand1 <= operand2
+  else if (operation === "=>")
+    return operand1 => operand2
   
+};
+
+visitor.prototype.visitRelationalOperator = function(ctx){
+  return ctx.getText()
 };
 
 visitor.prototype.visitSimpleExpression = function(ctx) {
@@ -401,20 +403,48 @@ visitor.prototype.visitProcedureStatement = function(ctx){
 };
 
 visitor.prototype.visitForStatement = function(ctx){
-// get varsymbol of the identifier
-// get indices through from the forList
-//for (var id = start; id < end; id++)
-// get the statements to be executed
+  var id = this.scope.lookup(ctx.identifier().getText());
+  varSymbol = this.scope.lookup(id.name);
+  
+  if(!varSymbol) {
+    var line = ctx.start.line;
+    throw new Error(`Variable not declared '${varName}' at line ${line}`);
+  }
 
-// assign end to value of varsymbol
+  var startIndex = parseInt(ctx.getChild(3).getChild(0).getText());
+  var endIndex = parseInt(ctx.getChild(3).getChild(2).getText());
+
+  if(!isNaN(startIndex) && !isNaN(endIndex)) {
+    if(startIndex <= endIndex) {
+      for(var i = startIndex; i < endIndex; i++) {
+        // execute statements
+        this.visit(ctx.statement());
+      }
+
+      varSymbol.value = endIndex;
+    } else {
+      var line = ctx.start.line;
+      throw new Error(`Index out of bounds ${startIndex} at line ${line}`);
+    }
+  } else {
+    var line = ctx.start.line;
+    throw new Error(`Starting and/or ending index should be an integer at line ${line}`);
+  }
 };
 
 visitor.prototype.visitIfStatement = function(ctx){
-  // get expression
-  // if(expression)
-  // get statements under if
-  // kung may else, get the statement under din
-  };
+  var hasElse = false;
 
+  if(ctx.getChildCount() > 4)
+    hasElse = true;
+
+  var result = this.visit(ctx.expression());
+
+  if(result) {
+    this.visit(ctx.getChild(3));
+  } else if(hasElse) {
+    this.visit(ctx.getChild(5));
+  }
+};
 
 exports.interpreterVisitor = visitor;
