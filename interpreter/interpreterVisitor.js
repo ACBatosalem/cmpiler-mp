@@ -334,12 +334,16 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
   var operation = this.visit(ctx.additiveoperator())
   var operand1 = this.visit(ctx.term())
   var operand2 = this.visit(ctx.simpleExpression())
+
+  operand1 = isNaN(operand1)?operand1:parseInt(operand1)
+  operand2 = isNaN(operand2)?operand2:parseInt(operand2)
+
   if(operation === "+") {
     if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
       throw new Error(`Cannot add data type boolean at line ${line}`)
     return operand1 + operand2
   } else if (operation === "-"){
-    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+    if (!isNaN(operand1) && !isNaN(operand2))
       return operand1 - operand2
     throw new Error(`Cannot subtract non-integer at line ${line}`)
   }else if (operation.toUpperCase() === "OR"){
@@ -357,16 +361,20 @@ visitor.prototype.visitTerm = function(ctx) {
   var operation = this.visit(ctx.multiplicativeoperator())
   var operand1 = this.visit(ctx.signedFactor())
   var operand2 = this.visit(ctx.term())
+
+  operand1 = isNaN(operand1)?operand1:parseInt(operand1)
+  operand2 = isNaN(operand2)?operand2:parseInt(operand2)
+  
   if(operation === "*"){
-    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+    if (!isNaN(operand1) && !isNaN(operand2))
       return operand1 * operand2
     throw new Error(`Cannot multiply non-integer at line ${line}`)
   } else if (operation.toUpperCase() === "DIV"){
-    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+    if (!isNaN(operand1) && !isNaN(operand2))
       return operand1 / operand2
     throw new Error(`Cannot divide non-integer at line ${line}`)
   }else if (operation.toUpperCase() === "MOD"){
-    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+    if (!isNaN(operand1) && !isNaN(operand2))
       return operand1 % operand2
     throw new Error(`Cannot modulo non-integer at line ${line}`)
   }else if (operation.toUpperCase() === "AND"){
@@ -391,7 +399,7 @@ visitor.prototype.visitSignedFactor = function(ctx){
       var factor = this.visit(ctx.factor())
       if(Number.isNaN(factor))
         throw new Error(`Cannot negate a non-number at line ${line}`)
-      else return factor
+      else return factor*-1
 
     }
   return this.visit(ctx.factor())  
@@ -715,9 +723,12 @@ visitor.prototype.visitTypeList = function(ctx) {
 // Visit a parse tree produced by pascalParser#componentType.
 visitor.prototype.visitComponentType = function(ctx) {
   // TODO error for non-integer arrays
-  if(ctx.getText().toUpperCase() !== "INTEGER") {
+  if(ctx.getText().toUpperCase() !== "INTEGER" ||
+    ctx.getText().toUpperCase() !== "STRING" ||
+    ctx.getText().toUpperCase() !== "CHAR" ||
+    ctx.getText().toUpperCase() !== "BOOLEAN") {
     var line = ctx.start.line;
-    throw new Error(`Cannot instantiate a non-integer array at line ${line}`);
+    throw new Error(`Invalid data type for array at line ${line}`);
   }
 
   return ctx.getText();

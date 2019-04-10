@@ -1,12 +1,6 @@
-program repeatUntilLoop;
-var
-   a: integer;
-
+program main;
+var b:integer;
 begin
-   a := 10;
-   (* repeat until loop execution *)
-   repeat
-      writeln('value of a: ', a);
-      a := a + 1
-   until a = 20;
+b  :=  -2 + 6 * 2;
+writeln(b)
 end.

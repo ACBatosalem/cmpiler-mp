@@ -15,6 +15,8 @@ class VariableSymbol extends Symbol {
      */
     constructor(name, type, isConstant = false, value=null) {
         super(name,type);
+        if(value != null)
+          this.value = value
         if(type.name === "INTEGER")
           this.value = 0
         else if(type.name === "STRING" || type.name === "CHAR")
