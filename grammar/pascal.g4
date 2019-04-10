@@ -348,14 +348,14 @@ ifStatement: IF expression THEN statement (: ELSE statement)?;
 
 
 repetetiveStatement
-   : //whileStatement
+   : whileStatement
   // | repeatStatement
    | forStatement
    ;
 
-// whileStatement
-//    : WHILE expression DO statement
-//    ;
+whileStatement
+   : WHILE expression DO statement
+   ;
 
 // repeatStatement
 //    : REPEAT statements UNTIL expression

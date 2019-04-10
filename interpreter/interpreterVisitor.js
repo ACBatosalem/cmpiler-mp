@@ -108,6 +108,10 @@ visitor.prototype.visitVariable = function(ctx) {
   var varName = this.visit(ctx.identifier());
   var varSymbol = this.scope.lookup(varName+"");
   var line = ctx.start.line
+  if(!varSymbol) {
+    var line = ctx.start.line;
+    throw new Error(`Variable not declared '${varName}' at line ${line}`);
+  }
   if(ctx.getChildCount() > 1) {
     var index = this.visit(ctx.expression())
     if(isNaN(index))
@@ -641,6 +645,18 @@ visitor.prototype.visitForStatement = function(ctx){
     throw new Error(`Starting and/or ending index should be an integer at line ${line}`);
   }
 };
+
+visitor.prototype.visitWhileStatement = function(ctx) {
+    var line = ctx.start.line;
+    var condition = this.visit(ctx.expression())
+  if(typeof condition !== "boolean")
+    throw new Error(`Invalid condition at line ${line}`)
+  
+  while(condition) {
+    this.visit(ctx.statement());
+    condition = this.visit(ctx.expression())
+  }
+}
 
 visitor.prototype.visitIfStatement = function(ctx){
   var hasElse = false;

@@ -402,6 +402,12 @@ pascalVisitor.prototype.visitRepetetiveStatement = function(ctx) {
 };
 
 
+// Visit a parse tree produced by pascalParser#whileStatement.
+pascalVisitor.prototype.visitWhileStatement = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by pascalParser#forStatement.
 pascalVisitor.prototype.visitForStatement = function(ctx) {
   return this.visitChildren(ctx);
