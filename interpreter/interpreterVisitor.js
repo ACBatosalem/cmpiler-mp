@@ -59,6 +59,7 @@ var visitor = function() {
     PascalVisitor.pascalVisitor.call(this); // chain the constructor
     this.ctr = 0;
     this.scope = null;
+    this.prevScope = 'global'
   };
 
 // chaining the prototypes
@@ -175,6 +176,7 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
     var parameters = this.visit(ctx.formalParameterList())
     funcSymbol.params = parameters
   } catch(e){}
+  symbolTables.set(procedureName, this.scope)
   procedureSymbol.ctx = ctx.block()
   //this.visit()
   this.scope = this.scope.enclosingScope;
@@ -556,9 +558,13 @@ visitor.prototype.visitFunctionDesignator = function(ctx){
       funcParams[i].value = params[i]
     } else funcParams[i].value = params[i].value;
   }
+  var funcPrevScope = this.prevScope
+  this.prevScope = funcName
   this.scope = symbolTables.get(funcName)
   this.visit(funcSymbol.ctx);
-  this.scope = this.scope.enclosingScope
+  this.prevScope = funcPrevScope
+  this.scope = symbolTables.get(this.prevScope)
+
   var returnVal = this.scope.lookup(funcName);
   
   if(returnVal) {
@@ -587,9 +593,12 @@ visitor.prototype.visitProcedureStatement = function(ctx){
       procParams[i].value = params[i]
     } else procParams[i].value = params[i].value;
   }
+  var funcPrevScope = this.prevScope
+  this.prevScope = procName
   this.scope = symbolTables.get(procName)
   this.visit(procSymbol.ctx);
-  this.scope = this.scope.enclosingScope
+  this.prevScope = funcPrevScope
+  this.scope = symbolTables.get(this.prevScope)
 };
 
 visitor.prototype.visitForStatement = function(ctx){
