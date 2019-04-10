@@ -1,6 +1,10 @@
-program main;
-var b:integer;
-begin
-b  :=  -2 + 6 * 2;
-writeln(b)
-end.
+PROGRAM MAIN;
+
+var a:integer;
+BEGIN {MAIN}
+  writeln(not(true) and true);
+  writeln(true and false);
+  writeln(false or true);
+  a    := 0-2 + 6 * 2;
+  writeln(a);
+END.  {MAIN}

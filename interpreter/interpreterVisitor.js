@@ -178,7 +178,7 @@ visitor.prototype.visitProcedureDeclaration = function(ctx) {
   //insert parameters chuchu
   try {
     var parameters = this.visit(ctx.formalParameterList())
-    funcSymbol.params = parameters
+    procedureSymbol.params = parameters
   } catch(e){}
   symbolTables.set(procedureName, this.scope)
   procedureSymbol.ctx = ctx.block()
@@ -335,16 +335,16 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
   var operand1 = this.visit(ctx.term())
   var operand2 = this.visit(ctx.simpleExpression())
 
-  operand1 = isNaN(operand1)?operand1:parseInt(operand1)
-  operand2 = isNaN(operand2)?operand2:parseInt(operand2)
+  // operand1 = isNaN(operand1)?operand1:parseInt(operand1)
+  // operand2 = isNaN(operand2)?operand2:parseInt(operand2)
 
   if(operation === "+") {
     if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
       throw new Error(`Cannot add data type boolean at line ${line}`)
-    return operand1 + operand2
+    return parseInt(operand1) + parseInt(operand2)
   } else if (operation === "-"){
     if (!isNaN(operand1) && !isNaN(operand2))
-      return operand1 - operand2
+      return parseInt(operand1) - parseInt(operand2)
     throw new Error(`Cannot subtract non-integer at line ${line}`)
   }else if (operation.toUpperCase() === "OR"){
     if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
@@ -362,20 +362,20 @@ visitor.prototype.visitTerm = function(ctx) {
   var operand1 = this.visit(ctx.signedFactor())
   var operand2 = this.visit(ctx.term())
 
-  operand1 = isNaN(operand1)?operand1:parseInt(operand1)
-  operand2 = isNaN(operand2)?operand2:parseInt(operand2)
+  //operand1 = isNaN(operand1)?operand1:parseInt(operand1)
+  //operand2 = isNaN(operand2)?operand2:parseInt(operand2)
   
   if(operation === "*"){
     if (!isNaN(operand1) && !isNaN(operand2))
-      return operand1 * operand2
+      return parseInt(operand1) * parseInt(operand2)
     throw new Error(`Cannot multiply non-integer at line ${line}`)
   } else if (operation.toUpperCase() === "DIV"){
     if (!isNaN(operand1) && !isNaN(operand2))
-      return operand1 / operand2
+      return parseInt(operand1) / parseInt(operand2)
     throw new Error(`Cannot divide non-integer at line ${line}`)
   }else if (operation.toUpperCase() === "MOD"){
     if (!isNaN(operand1) && !isNaN(operand2))
-      return operand1 % operand2
+      return parseInt(operand1) % parseInt(operand2)
     throw new Error(`Cannot modulo non-integer at line ${line}`)
   }else if (operation.toUpperCase() === "AND"){
     if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
@@ -416,8 +416,7 @@ visitor.prototype.visitFactor = function(ctx){
     // not sure if error ba dapat to
   }if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
-  if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"
-  || ctx.getChild(0).constructor.name === "BoolContext"){
+  if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"){
     var txt = ctx.getText().replace(/\'/g,'')
 
     return isNaN(txt)?txt:parseInt(txt)
@@ -431,6 +430,8 @@ visitor.prototype.visitFactor = function(ctx){
       ? parseInt(variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]) 
       : variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]
     }
+  } if(ctx.getChild(0).constructor.name === "BoolContext"){
+    return ctx.getText() == "true"
   }
   
   else {
@@ -565,10 +566,10 @@ visitor.prototype.visitFunctionDesignator = function(ctx){
 
   var funcParams = funcSymbol.params;
   for(var i = 0; i < funcParams.length; i++) {
-    params[i] = this.scope.lookup(params[i]);
-    if(!params[i]) {
+    var valueHolder = this.scope.lookup(params[i]);
+    if(!valueHolder) {
       funcParams[i].value = params[i]
-    } else funcParams[i].value = params[i].value;
+    } else funcParams[i].value = valueHolder.value;
   }
   var funcPrevScope = this.prevScope
   this.prevScope = funcName
@@ -596,14 +597,13 @@ visitor.prototype.visitProcedureStatement = function(ctx){
     throw new Error(`Variable not declared '${procName}' at line ${line}`);
   }
 
-  var procParams = procSymbol.getParams();
+  var procParams = procSymbol.params;
 
   for(var i = 0; i < procParams.length; i++) {
-    params[i] = this.scope.lookup(params[i]);
-    
-    if(!params[i]) {
+    var valueHolder = this.scope.lookup(params[i]);
+    if(!valueHolder) {
       procParams[i].value = params[i]
-    } else procParams[i].value = params[i].value;
+    } else procParams[i].value = valueHolder.value;
   }
   var funcPrevScope = this.prevScope
   this.prevScope = procName
@@ -627,7 +627,7 @@ visitor.prototype.visitForStatement = function(ctx){
   var endIndex = parseInt(ctx.getChild(3).getChild(2).getText());
   if(!isNaN(startIndex) && !isNaN(endIndex)) {
     if(startIndex <= endIndex && direction === "TO") {
-      for(var i = startIndex; i < endIndex; i++) {
+      for(var i = startIndex; i <= endIndex; i++) {
         // execute statements
         var varSymbolStore = this.scope.lookup(id.name);
         varSymbolStore.value = i;
@@ -636,7 +636,7 @@ visitor.prototype.visitForStatement = function(ctx){
 
       varSymbol.value = endIndex;
     } else if(startIndex >= endIndex && direction === "DOWNTO") {
-      for(var i = startIndex; i > endIndex; i--) {
+      for(var i = startIndex; i >= endIndex; i--) {
         // execute statements
         var varSymbolStore = this.scope.lookup(id.name);
         varSymbolStore.value = i;
@@ -723,9 +723,9 @@ visitor.prototype.visitTypeList = function(ctx) {
 // Visit a parse tree produced by pascalParser#componentType.
 visitor.prototype.visitComponentType = function(ctx) {
   // TODO error for non-integer arrays
-  if(ctx.getText().toUpperCase() !== "INTEGER" ||
-    ctx.getText().toUpperCase() !== "STRING" ||
-    ctx.getText().toUpperCase() !== "CHAR" ||
+  if(ctx.getText().toUpperCase() !== "INTEGER" &&
+    ctx.getText().toUpperCase() !== "STRING" &&
+    ctx.getText().toUpperCase() !== "CHAR" &&
     ctx.getText().toUpperCase() !== "BOOLEAN") {
     var line = ctx.start.line;
     throw new Error(`Invalid data type for array at line ${line}`);

@@ -216,6 +216,7 @@ simpleStatement
    : assignmentStatement
    | ioStatement
    | procedureStatement
+   | functionDesignator
    | emptyStatement
    ;
 
