@@ -21,67 +21,68 @@ begin
   else
      writeln('They are not equal');
 
-//  if (num1 = num2) then
-//     writeln('They are equal')
-//  else
-//     writeln('They are not equal');
+  if (num1 = num2) then
+     writeln('They are equal')
+  else
+     writeln('They are not equal');
 
-//  if (num1 > num2) then
-//     writeln('Num1 is greater than num2')
-//  else
-//     writeln('Num1 is NOT greater than num2');
+  if (num1 > num2) then
+     writeln('Num1 is greater than num2')
+  else
+     writeln('Num1 is NOT greater than num2');
 
-//  if (num1 < num2) then
-//     writeln('Num1 is less than num2')
-//  else
-//     writeln('Num1 is NOT less than num2');
+  if (num1 < num2) then
+     writeln('Num1 is less than num2')
+  else
+     writeln('Num1 is NOT less than num2');
 
-//  if (num1 >= num2) then
-//     writeln('num1 >= num2')
-//  else
-//     writeln('!(num1 >= num2)');
+  if (num1 >= num2) then
+     writeln('num1 >= num2')
+  else
+     writeln('!(num1 >= num2)');
 
 
   // and, or, not
-//  if ((par = str) and (par <> 'c')) then
-//     writeln('par is pare chong')
-//  else
-//     writeln('meh');
+  if ((par = str) and (par <> 'c')) then
+     writeln('par is pare chong')
+  else
+     writeln('meh');
 
-//  if (par = str) and (par <> 'c') then
-//     writeln('par is pare chong')
-//  else
-//     writeln('meh');
-
-
-//  if (not(par = 'pare chong') or not(par = 'par')) then
-//     writeln('par is in if')
-//  else
-//     writeln(f);
-
-//  if not(par = 'pare chong') or not(par = 'par') then
-//     writeln('par is in if')
-//  else
-//     writeln(f);
-
-//  writeln(not(true) and true);
-//  writeln(true and false);
-//  writeln(false or true);
+  if (par = str) and (par <> 'c') then
+     writeln('par is pare chong')
+  else
+     writeln('meh');
 
 
-//  writeln('Please input how you call your friend:');
-//  readln(user);
+  if (not(par = 'pare chong') or not(par = 'par')) then
+     writeln('par is in if')
+  else
+     writeln(f);
 
-//  if (user <> str) then
-//  begin
-//     writeln('Thats cool :/');
-//     conditionalFunc := 'n';
-//  end
-//  else
-//  begin
-//     writeln('Awesome pare chong ;)');
-//     conditionalFunc := 'y';
-//  end;
+  if not(par = 'pare chong') or not(par = 'par') then
+     writeln('par is in if')
+  else
+     writeln(f);
+
+  writeln(not(true) and true);
+  writeln(true and false);
+  writeln(false or true);
+  writeln(not(4>5));
+
+
+  writeln('Please input how you call your friend:');
+  readln(user);
+
+  if (user <> str) then
+  begin
+     writeln('Thats cool :/');
+     conditionalFunc := 'n';
+  end
+  else
+  begin
+     writeln('Awesome pare chong ;)');
+     conditionalFunc := 'y';
+  end;
 
 
 end;

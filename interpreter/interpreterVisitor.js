@@ -304,16 +304,19 @@ visitor.prototype.visitExpression = function(ctx) {
     return this.visit(ctx.simpleExpression())
   
   
-  var operand1 = this.visit(ctx.getChild(0))
-  var operand2
+  var operand1 = this.visit(ctx.getChild(0))[0]
+  var operation = this.visit(ctx.getChild(1))
+  var operand2 = this.visit(ctx.getChild(2))[0]
   var result = operand1
 
-  for(var x = 1; x < ctx.getChildCount(); x+=2){
-    var operation = this.visit(ctx.getChild(x))
-    operand2 = this.visit(ctx.getChild(x+1))
-    if(operation === "=")
+    if(typeof operand1 != "number")
+      operand1 = operand1.toString()
+    if(typeof operand2 != "number")
+      operand2 = operand2.toString()
+    if(operation === "="){
+      //console.log(operand1 == operand2)
       result = operand1 == operand2
-    else if (operation === "<>")
+    }else if (operation === "<>")
       result =  operand1 != operand2
     else if (operation === "<")
       result =  operand1 < operand2
@@ -324,7 +327,7 @@ visitor.prototype.visitExpression = function(ctx) {
     else if (operation === ">=")
       result = operand1 >= operand2
     operand1 = result
-  }
+
   return result
 };
 
@@ -345,8 +348,6 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
   for(var x = 1; x < ctx.getChildCount(); x+=2){
     var operation = this.visit(ctx.getChild(x))
     operand2 = this.visit(ctx.getChild(x+1))
-    // console.log(operand1)
-    // console.log(operand2)
     if(operation === "+") {
       if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
         throw new Error(`Cannot add data type boolean at line ${line}`)
@@ -431,6 +432,8 @@ visitor.prototype.visitFactor = function(ctx){
   if(ctx.getChild(0).constructor.name === "TerminalNodeImpl"
   && ctx.getChildCount() == 2){
     var temp = this.visit(ctx.factor())
+    if(typeof temp == "boolean")
+      return !temp
     if(temp == "true" || temp == "false"){
       temp = temp == "true"
       return !temp
@@ -457,8 +460,8 @@ visitor.prototype.visitFactor = function(ctx){
   }
   
   else {
-    //console.log("OOF")
-    return this.visit(ctx.expression())
+    var v = this.visit(ctx.expression())
+    return v
   }
 };
 
@@ -707,7 +710,8 @@ visitor.prototype.visitIfStatement = function(ctx){
     hasElse = true;
 
   var result = this.visit(ctx.expression());
-
+  while(Array.isArray(result))
+    result = result[0]
   if(result) {
     this.visit(ctx.getChild(3));
   } else if(hasElse) {
