@@ -348,7 +348,7 @@ visitor.prototype.visitExpression = function(ctx) {
     return this.visit(ctx.simpleExpression())
   else {
     var firstSet = this.visit(ctx.simpleExpression()).toString().split(",")
-    var secondSet = this.visit(ctx.expression()).toString().split(",")
+    
     var line = ctx.start.line;
     var firstFactor = firstSet[0]
     var dataType = ''
@@ -391,28 +391,30 @@ visitor.prototype.visitExpression = function(ctx) {
         }
       }
     }
-
-    for(var i = 0; i < secondSet.length; i++) {
-      var temp = secondSet[i]
-      if(temp.includes('\'')) {
-        if(dataType !== "STRING" && dataType !== "CHAR")
-          throw new Error(`Expecting ${dataType} but got a string at line ${line}`)
-      } else if(!isNaN(temp)) {
-        if(dataType !== "INTEGER")
-          throw new Error(`Expecting ${dataType} but got an integer at line ${line}`)
-      } else if(temp == true || temp == false 
-        || temp == 'true' || temp == 'false') {
-        if(dataType !== "BOOLEAN")
-        throw new Error(`Expecting ${dataType} but got a boolean at line ${line}`)
-      } else {
-        var varTemp = this.scope.lookup(temp)
-        if(!varTemp) {
-          error = true
-          throw new Error(`!!Variable not declared ${temp} at line ${line}`)
-        }
-        else if(dataType !== varTemp.type.name){
-          error = true
-          throw new Error(`Expecting ${dataType} but got a ${varTemp.type.name} at line ${line}`)
+    for(var x = 2; x <ctx.getChildCount(); i+=2){
+      var secondSet = this.visit(ctx.getChild(x)).toString().split(",")
+      for(var i = 0; i < secondSet.length; i++) {
+        var temp = secondSet[i]
+        if(temp.includes('\'')) {
+          if(dataType !== "STRING" && dataType !== "CHAR")
+            throw new Error(`Expecting ${dataType} but got a string at line ${line}`)
+        } else if(!isNaN(temp)) {
+          if(dataType !== "INTEGER")
+            throw new Error(`Expecting ${dataType} but got an integer at line ${line}`)
+        } else if(temp == true || temp == false 
+          || temp == 'true' || temp == 'false') {
+          if(dataType !== "BOOLEAN")
+          throw new Error(`Expecting ${dataType} but got a boolean at line ${line}`)
+        } else {
+          var varTemp = this.scope.lookup(temp)
+          if(!varTemp) {
+            error = true
+            throw new Error(`!!Variable not declared ${temp} at line ${line}`)
+          }
+          else if(dataType !== varTemp.type.name){
+            error = true
+            throw new Error(`Expecting ${dataType} but got a ${varTemp.type.name} at line ${line}`)
+          }
         }
       }
     }

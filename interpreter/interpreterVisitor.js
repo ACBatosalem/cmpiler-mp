@@ -303,23 +303,29 @@ visitor.prototype.visitExpression = function(ctx) {
   if(ctx.getChildCount() == 1)
     return this.visit(ctx.simpleExpression())
   
-  var operation = this.visit(ctx.relationaloperator())
-  var operand1 = this.visit(ctx.simpleExpression())
-  var operand2 = this.visit(ctx.expression())
-
-  if(operation === "=")
-    return operand1 == operand2
-  else if (operation === "<>")
-    return operand1 != operand2
-  else if (operation === "<")
-    return operand1 < operand2
-  else if (operation === ">")
-    return operand1 > operand2
-  else if (operation === "<=")
-    return operand1 <= operand2
-  else if (operation === ">=")
-    return operand1 >= operand2
   
+  var operand1 = this.visit(ctx.getChild(0))
+  var operand2
+  var result = operand1
+
+  for(var x = 1; x < ctx.getChildCount(); x+=2){
+    var operation = this.visit(ctx.getChild(x))
+    operand2 = this.visit(ctx.getChild(x+1))
+    if(operation === "=")
+      result = operand1 == operand2
+    else if (operation === "<>")
+      result =  operand1 != operand2
+    else if (operation === "<")
+      result =  operand1 < operand2
+    else if (operation === ">")
+      result =  operand1 > operand2
+    else if (operation === "<=")
+      result =  operand1 <= operand2
+    else if (operation === ">=")
+      result = operand1 >= operand2
+    operand1 = result
+  }
+  return result
 };
 
 visitor.prototype.visitRelationaloperator = function(ctx){
@@ -331,57 +337,69 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
     return this.visit(ctx.term())
 
   var line = ctx.start.line;
-  var operation = this.visit(ctx.additiveoperator())
-  var operand1 = this.visit(ctx.term())
-  var operand2 = this.visit(ctx.simpleExpression())
+  
+  var operand1 = this.visit(ctx.getChild(0))
+  var operand2
+  var result = operand1
 
-  // operand1 = isNaN(operand1)?operand1:parseInt(operand1)
-  // operand2 = isNaN(operand2)?operand2:parseInt(operand2)
-
-  if(operation === "+") {
-    if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
-      throw new Error(`Cannot add data type boolean at line ${line}`)
-    return parseInt(operand1) + parseInt(operand2)
-  } else if (operation === "-"){
-    if (!isNaN(operand1) && !isNaN(operand2))
-      return parseInt(operand1) - parseInt(operand2)
-    throw new Error(`Cannot subtract non-integer at line ${line}`)
-  }else if (operation.toUpperCase() === "OR"){
-    if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
-      return operand1 || operand2
-    throw new Error(`"BOOLEAN" expected at line ${line}`)
+  for(var x = 1; x < ctx.getChildCount(); x+=2){
+    var operation = this.visit(ctx.getChild(x))
+    operand2 = this.visit(ctx.getChild(x+1))
+    // console.log(operand1)
+    // console.log(operand2)
+    if(operation === "+") {
+      if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
+        throw new Error(`Cannot add data type boolean at line ${line}`)
+      result = parseInt(operand1) + parseInt(operand2)
+    } else if (operation === "-"){
+      if (!isNaN(operand1) && !isNaN(operand2))
+        result = parseInt(operand1) - parseInt(operand2)
+      else throw new Error(`Cannot subtract non-integer at line ${line}`)
+    }else if (operation.toUpperCase() === "OR"){
+      if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
+        result =operand1 || operand2
+      else throw new Error(`"BOOLEAN" expected at line ${line}`)
+    }
+    operand1 = result
   }
+  return result
 };
 
 visitor.prototype.visitTerm = function(ctx) {
   if(ctx.getChildCount() == 1)
-    return this.visit(ctx.signedFactor())
+    return this.visit(ctx.getChild(0))
 
   var line = ctx.start.line;
-  var operation = this.visit(ctx.multiplicativeoperator())
-  var operand1 = this.visit(ctx.signedFactor())
-  var operand2 = this.visit(ctx.term())
-
-  //operand1 = isNaN(operand1)?operand1:parseInt(operand1)
-  //operand2 = isNaN(operand2)?operand2:parseInt(operand2)
   
-  if(operation === "*"){
-    if (!isNaN(operand1) && !isNaN(operand2))
-      return parseInt(operand1) * parseInt(operand2)
-    throw new Error(`Cannot multiply non-integer at line ${line}`)
-  } else if (operation.toUpperCase() === "DIV"){
-    if (!isNaN(operand1) && !isNaN(operand2))
-      return parseInt(operand1) / parseInt(operand2)
-    throw new Error(`Cannot divide non-integer at line ${line}`)
-  }else if (operation.toUpperCase() === "MOD"){
-    if (!isNaN(operand1) && !isNaN(operand2))
-      return parseInt(operand1) % parseInt(operand2)
-    throw new Error(`Cannot modulo non-integer at line ${line}`)
-  }else if (operation.toUpperCase() === "AND"){
-    if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
-      return operand1 && operand2
-    throw new Error(`"BOOLEAN" expected at line ${line}`)
+  var operand1 = this.visit(ctx.getChild(0))
+  var operand2
+  var result = operand1
+
+  for(var x = 1; x < ctx.getChildCount(); x+=2){
+    var operation = this.visit(ctx.getChild(x))
+    operand2 = this.visit(ctx.getChild(x+1))
+    // console.log(operand1)
+    // console.log(operand2)
+    if(operation === "*"){
+      if (!isNaN(operand1) && !isNaN(operand2))
+        result = parseInt(operand1) * parseInt(operand2)
+      else throw new Error(`Cannot multiply non-integer at line ${line}`)
+    } else if (operation.toUpperCase() === "DIV"){
+      if (!isNaN(operand1) && !isNaN(operand2))
+        result = parseInt(operand1) / parseInt(operand2)
+      else throw new Error(`Cannot divide non-integer at line ${line}`)
+    }else if (operation.toUpperCase() === "MOD"){
+      if (!isNaN(operand1) && !isNaN(operand2))
+        result = parseInt(operand1) % parseInt(operand2)
+      else throw new Error(`Cannot modulo non-integer at line ${line}`)
+    }else if (operation.toUpperCase() === "AND"){
+      if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
+        result = operand1 && operand2
+      else throw new Error(`"BOOLEAN" expected at line ${line}`)
+    }
+    operand1 = result
   }
+  return result
 };
 
 visitor.prototype.visitAdditiveoperator = function(ctx){
@@ -407,20 +425,22 @@ visitor.prototype.visitSignedFactor = function(ctx){
 
 visitor.prototype.visitFactor = function(ctx){
   // insert operation for NOT
+  //console.log(ctx.getChild(0).constructor.name)
   if(ctx.getChild(0).constructor.name === "TerminalNodeImpl"
   && ctx.getChildCount() == 2){
     var temp = this.visit(ctx.factor())
-    if(typeof temp === 'boolean')
+    if(temp == "true" || temp == "false"){
+      temp = temp == "true"
       return !temp
-    else temp 
+    }else temp 
     // not sure if error ba dapat to
-  }if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
+  }else if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
-  if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"){
+  else if(ctx.getChild(0).constructor.name === "UnsignedConstantContext"){
     var txt = ctx.getText().replace(/\'/g,'')
 
     return isNaN(txt)?txt:parseInt(txt)
-  }if(ctx.getChild(0).constructor.name === "VariableContext"){
+  }else if(ctx.getChild(0).constructor.name === "VariableContext"){
     var variable = this.visit(ctx.variable())
     if(variable.varSymbol == undefined) {
       return variable.type.name === "INTEGER"
@@ -430,7 +450,7 @@ visitor.prototype.visitFactor = function(ctx){
       ? parseInt(variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]) 
       : variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]
     }
-  } if(ctx.getChild(0).constructor.name === "BoolContext"){
+  } else if(ctx.getChild(0).constructor.name == "BoolContext"){
     return ctx.getText() == "true"
   }
   

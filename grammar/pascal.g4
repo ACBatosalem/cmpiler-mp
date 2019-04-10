@@ -250,7 +250,7 @@ variable
    ;
 
 expression
-   : simpleExpression (relationaloperator expression)?
+   : simpleExpression (relationaloperator simpleExpression)*
    ;
 
 relationaloperator
@@ -263,7 +263,7 @@ relationaloperator
    ;
 
 simpleExpression
-   : term (additiveoperator simpleExpression)?
+   : term (additiveoperator term)*
    ;
 
 additiveoperator
@@ -273,7 +273,7 @@ additiveoperator
    ;
 
 term
-   : signedFactor (multiplicativeoperator term)?
+   : signedFactor (multiplicativeoperator signedFactor)*
    ;
 
 multiplicativeoperator
