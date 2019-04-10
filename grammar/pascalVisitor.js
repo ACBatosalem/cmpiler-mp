@@ -408,6 +408,12 @@ pascalVisitor.prototype.visitWhileStatement = function(ctx) {
 };
 
 
+// Visit a parse tree produced by pascalParser#repeatStatement.
+pascalVisitor.prototype.visitRepeatStatement = function(ctx) {
+  return this.visitChildren(ctx);
+};
+
+
 // Visit a parse tree produced by pascalParser#forStatement.
 pascalVisitor.prototype.visitForStatement = function(ctx) {
   return this.visitChildren(ctx);

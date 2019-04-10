@@ -658,6 +658,18 @@ visitor.prototype.visitWhileStatement = function(ctx) {
   }
 }
 
+visitor.prototype.visitRepeatStatement = function(ctx) {
+  var line = ctx.start.line;
+  var condition = this.visit(ctx.expression())
+if(typeof condition !== "boolean")
+  throw new Error(`Invalid condition at line ${line}`)
+
+do {
+  this.visit(ctx.statements());
+  condition = this.visit(ctx.expression())
+} while(!condition)
+}
+
 visitor.prototype.visitIfStatement = function(ctx){
   var hasElse = false;
 

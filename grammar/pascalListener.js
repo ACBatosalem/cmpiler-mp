@@ -605,6 +605,15 @@ pascalListener.prototype.exitWhileStatement = function(ctx) {
 };
 
 
+// Enter a parse tree produced by pascalParser#repeatStatement.
+pascalListener.prototype.enterRepeatStatement = function(ctx) {
+};
+
+// Exit a parse tree produced by pascalParser#repeatStatement.
+pascalListener.prototype.exitRepeatStatement = function(ctx) {
+};
+
+
 // Enter a parse tree produced by pascalParser#forStatement.
 pascalListener.prototype.enterForStatement = function(ctx) {
 };

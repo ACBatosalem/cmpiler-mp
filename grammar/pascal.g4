@@ -349,7 +349,7 @@ ifStatement: IF expression THEN statement (: ELSE statement)?;
 
 repetetiveStatement
    : whileStatement
-  // | repeatStatement
+   | repeatStatement
    | forStatement
    ;
 
@@ -357,9 +357,9 @@ whileStatement
    : WHILE expression DO statement
    ;
 
-// repeatStatement
-//    : REPEAT statements UNTIL expression
-//    ;
+repeatStatement
+   : REPEAT statements UNTIL expression
+   ;
 
 forStatement: FOR identifier ASSIGN forList DO statement;
 
@@ -418,10 +418,12 @@ OR: O R;
 PROCEDURE: P R O C E D U R E;
 PROGRAM: P R O G R A M;
 READLN: R E A D L N;
+REPEAT: R E P E A T;
 SET: S E T;
 THEN: T H E N;
 TO: T O;
 TYPE: T Y P E;
+UNTIL: U N T I L;
 VAR: V A R;
 WHILE: W H I L E;
 WRITE: W R I T E;
