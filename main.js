@@ -6,9 +6,48 @@ var PascalErrorListener = require('./grammar/pascalErrorListener.js').PascalErro
 var SemanticAnalyzer = require('./semantic-analyzer/SemanticAnalyzer.js');
 var fs = require("fs")
 var InterpreterVisitor = require("./interpreter/interpreterVisitor.js");
-
+var Step = require("./step.js");
 
 var main = function(input) {
+    
+    var lineReader = require('readline').createInterface({
+        input: require('fs').createReadStream('grammar/inputfiles/input.txt')
+      });
+    
+    const readline = require('readline').createInterface({
+        input: process.stdin,
+        output: process.stdout
+      })
+      
+    //   var recursiveAsyncReadLine = function () {
+    //     rl.question('Command: ', function (answer) {
+    //       if (answer == 'exit') //we need some base case, for recursion
+    //         return rl.close(); //closing RL and returning from function.
+    //       log('Got it! Your answer was: "', answer, '"');
+    //       recursiveAsyncReadLine(); //Calling this function again to ask new question
+    //     });
+    //   };
+      
+    //   recursiveAsyncReadLine(); //we have to actually start our recursion somehow
+
+      
+    //   lineReader.on('line', function (line) {
+    //     readline.question(`blah`, (name) => {
+
+    //         console.log('Line from file:', line);
+    //         name = null;
+    //       })
+
+    //       readline.question(`blah`, (name) => {
+
+    //         console.log('Line from file:', line);
+    //         readline.close()
+    //       })
+            
+    //   });
+    
+      
+    
     var chars = new antlr4.InputStream(input);
     var lexer = new PascalLexer.pascalLexer(chars);
     var tokens  = new antlr4.CommonTokenStream(lexer);
@@ -23,26 +62,20 @@ var main = function(input) {
 
     parser.buildParseTrees = true;
     var tree = parser.program();
-    //console.log(tree.toStringTree(parser.ruleNames));
-
+  
     var printer = new PascalVisitorImpl.pascalVisitorImpl();
     printer.visitProgram(tree);
-    //analyzer.visit(tree);
+  
+    // var aast = new InterpreterVisitor.interpreterVisitor();
+    // aast.visitProgram(tree);
 
-    var aast = new InterpreterVisitor.interpreterVisitor();
-    aast.visitProgram(tree);
-
-    //antlr4.tree.ParseTreeWalker.DEFAULT.walk(printer, tree);
-   /* var result = printer.stack.slice(-1).pop();
-   if(!printer.semanticErrorCheck && !errorListener.syntaxErrorCheck)
-        console.log(result);
-    else
-        process.stdout.write(" [LINE " + errorLine + "]" + "\n");
-
-    errorLine++;
-    return result;*/
+    var step = new Step.step();
+    step.visitProgram(tree);
+  
 }
 
 var input = fs.readFileSync("grammar/inputfiles/input.txt").toString()
+
+
 
 main(input)
