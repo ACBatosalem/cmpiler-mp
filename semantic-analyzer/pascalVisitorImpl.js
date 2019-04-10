@@ -656,9 +656,12 @@ visitor.prototype.visitTypeList = function(ctx) {
 // Visit a parse tree produced by pascalParser#componentType.
 visitor.prototype.visitComponentType = function(ctx) {
   // TODO error for non-integer arrays
-  if(ctx.getText().toUpperCase() !== "INTEGER") {
+  if(ctx.getText().toUpperCase() !== "INTEGER" &&
+  ctx.getText().toUpperCase() !== "STRING" &&
+  ctx.getText().toUpperCase() !== "CHAR" &&
+  ctx.getText().toUpperCase() !== "BOOLEAN") {
     var line = ctx.start.line;
-    throw new Error(`Cannot instantiate a non-integer array at line ${line}`);
+    throw new Error(`Invalid data type for array at line ${line}`);
   }
 
   return ctx.getText();
