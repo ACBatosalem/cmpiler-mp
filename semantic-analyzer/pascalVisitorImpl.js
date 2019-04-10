@@ -347,7 +347,7 @@ visitor.prototype.visitExpression = function(ctx) {
   if(ctx.getChildCount() == 1)
     return this.visit(ctx.simpleExpression())
   else {
-    var firstSet = this.visit(ctx.simpleExpression()).toString().split(",")
+    var firstSet = this.visit(ctx.getChild(0)).toString().split(",")
     
     var line = ctx.start.line;
     var firstFactor = firstSet[0]
@@ -391,7 +391,7 @@ visitor.prototype.visitExpression = function(ctx) {
         }
       }
     }
-    for(var x = 2; x <ctx.getChildCount(); i+=2){
+    for(var x = 2; x <ctx.getChildCount(); x+=2){
       var secondSet = this.visit(ctx.getChild(x)).toString().split(",")
       for(var i = 0; i < secondSet.length; i++) {
         var temp = secondSet[i]

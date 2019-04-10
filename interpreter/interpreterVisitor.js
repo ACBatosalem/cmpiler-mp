@@ -350,7 +350,9 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
     if(operation === "+") {
       if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
         throw new Error(`Cannot add data type boolean at line ${line}`)
-      result = parseInt(operand1) + parseInt(operand2)
+      if(!Number.isNaN(operand1) && !Number.isNaN(operand2))
+        result = parseInt(operand1) + parseInt(operand2)
+      else result = operand1.getText() + operand2.getText()
     } else if (operation === "-"){
       if (!isNaN(operand1) && !isNaN(operand2))
         result = parseInt(operand1) - parseInt(operand2)
