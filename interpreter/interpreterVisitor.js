@@ -106,6 +106,18 @@ visitor.prototype.visitTypeIdentifier = function(ctx) {
 visitor.prototype.visitVariable = function(ctx) {
   var varName = this.visit(ctx.identifier());
   var varSymbol = this.scope.lookup(varName+"");
+  var line = ctx.start.line
+  if(ctx.getChildCount() > 1) {
+    var index = this.visit(ctx.expression())
+    if(isNaN(index))
+      throw new Error(`Index not an integer at line ${line}`)
+    if(index < varSymbol.startIndex || index > varSymbol.endIndex)
+      throw new Error(`Index out of bounds at line ${line}`)
+    return {"varSymbol":varSymbol,"index":index}
+  } else{
+    if(varSymbol.arrayValues != undefined)
+      throw new Error(`No index at line ${line}`)
+  }
   return varSymbol
 };
 
@@ -259,13 +271,23 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
   //include assignment for array type
   var varSymbol = this.visit(ctx.variable())
   var funcName = this.scope.scopeName
+  var line = ctx.start.line
   //console.log(varSymbol)
   //console.log(this.scope.scopeName)
-
+  var isReturn = false
   var value = this.visit(ctx.expression())
-  var isReturn = this.scope.scopeName===varSymbol.name?true:false
-
-  varSymbol.value = value
+  if(varSymbol.varSymbol == undefined){
+    isReturn = this.scope.scopeName===varSymbol.name?true:false
+    if (varSymbol.type.name === 'CHAR' && value.length > 1)
+      throw new Error(`"CHAR" expected but got "STRING" instead at line ${line}.`)
+    varSymbol.value = value
+  } else {
+    var index = varSymbol.index
+    var varSymbol = varSymbol.varSymbol
+    if (varSymbol.type.name === 'CHAR' && value.length > 1)
+      throw new Error(`"CHAR" expected but got "STRING" instead at line ${line}.`)
+    varSymbol.arrayValues[index - varSymbol.startIndex] = value
+  }
 
   if(isReturn)
     return value;
@@ -302,17 +324,22 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
   if(ctx.getChildCount() == 1)
     return this.visit(ctx.term())
 
-  
+  var line = ctx.start.line;
   var operation = this.visit(ctx.additiveoperator())
   var operand1 = this.visit(ctx.term())
   var operand2 = this.visit(ctx.simpleExpression())
-  if(operation === "+")
+  if(operation === "+") {
+    if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
+      throw new Error(`Cannot add data type boolean at line ${line}`)
     return operand1 + operand2
-  else if (operation === "-")
-    return operand1 - operand2
-  else if (operation.toUpperCase() === "OR"){
+  } else if (operation === "-"){
+    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+      return operand1 - operand2
+    throw new Error(`Cannot subtract non-integer at line ${line}`)
+  }else if (operation.toUpperCase() === "OR"){
     if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
       return operand1 || operand2
+    throw new Error(`"BOOLEAN" expected at line ${line}`)
   }
 };
 
@@ -320,19 +347,26 @@ visitor.prototype.visitTerm = function(ctx) {
   if(ctx.getChildCount() == 1)
     return this.visit(ctx.signedFactor())
 
-  
+  var line = ctx.start.line;
   var operation = this.visit(ctx.multiplicativeoperator())
   var operand1 = this.visit(ctx.signedFactor())
   var operand2 = this.visit(ctx.term())
-  if(operation === "*")
-    return operand1 * operand2
-  else if (operation.toUpperCase() === "DIV")
-    return operand1 / operand2
-  else if (operation.toUpperCase() === "MOD")
-    return operand1 % operand2
-  else if (operation.toUpperCase() === "AND"){
+  if(operation === "*"){
+    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+      return operand1 * operand2
+    throw new Error(`Cannot multiply non-integer at line ${line}`)
+  } else if (operation.toUpperCase() === "DIV"){
+    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+      return operand1 / operand2
+    throw new Error(`Cannot divide non-integer at line ${line}`)
+  }else if (operation.toUpperCase() === "MOD"){
+    if (typeof operand1 === 'integer' && typeof operand2 === 'integer')
+      return operand1 % operand2
+    throw new Error(`Cannot modulo non-integer at line ${line}`)
+  }else if (operation.toUpperCase() === "AND"){
     if(typeof operand1 === 'boolean' && typeof operand2 === 'boolean')
       return operand1 && operand2
+    throw new Error(`"BOOLEAN" expected at line ${line}`)
   }
 };
 
@@ -375,8 +409,14 @@ visitor.prototype.visitFactor = function(ctx){
     return isNaN(txt)?txt:parseInt(txt)
   }if(ctx.getChild(0).constructor.name === "VariableContext"){
     var variable = this.visit(ctx.variable())
-    return variable.type.name === "INTEGER"
-    ? parseInt(variable.value) : variable.value
+    if(variable.varSymbol == undefined) {
+      return variable.type.name === "INTEGER"
+      ? parseInt(variable.value) : variable.value
+    } else {
+      return variable.varSymbol.type.name === "INTEGER"
+      ? parseInt(variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]) 
+      : variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]
+    }
   }
   
   else {
@@ -423,15 +463,35 @@ visitor.prototype.visitConstant = function(ctx) {
   if(ctx.getChild(0).constructor.name == "ExpressionContext")
     return this.visit(ctx.expression())
   if(ctx.getChild(0).constructor.name == "VariableContext") {
-    var txt = this.visit(ctx.variable())
-    //console.log(txt)
-    //var varSymbol = 
-    return txt.value
+    var variable = this.visit(ctx.variable())
+    if(variable.varSymbol == undefined) {
+      return variable.type.name === "INTEGER"
+      ? parseInt(variable.value) : variable.value
+    } else {
+      return variable.varSymbol.type.name === "INTEGER"
+      ? parseInt(variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]) 
+      : variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex]
+    }
   } 
   if(ctx.getChild(0).constructor.name == "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
   if(ctx.getChild(0).constructor.name == "SignContext"){
-    // negate chuchu
+    var sign = ctx.getChild(0).getText()
+    if(ctx.getChild(1).constructor.name == "UnsignedNumberContext"){
+      var num = this.visit(ctx.unsignedNumber())
+      return sign === '-'?num*-1:num
+     }else {
+      var variable = this.visit(ctx.variable())
+      if(variable.varSymbol == undefined) {
+        if(variable.type.name === "INTEGER")
+          return sign === '-'?parseInt(variable.value)*-1:parseInt(variable.value)
+      } else {
+        if(variable.varSymbol.type.name === "INTEGER")
+        return sign === '-'
+        ? parseInt(variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex])*-1
+        : parseInt(variable.varSymbol.arrayValues[variable.index - variable.varSymbol.startIndex])
+      }
+    }
   } 
   else return ctx.getText()
 };
@@ -502,7 +562,7 @@ visitor.prototype.visitFunctionDesignator = function(ctx){
   var returnVal = this.scope.lookup(funcName);
   
   if(returnVal) {
-   // console.log(`Return ${returnVal.value}`);
+   //console.log(`Return ${returnVal.value}`);
     return returnVal.value;
   }
   
@@ -548,7 +608,8 @@ visitor.prototype.visitForStatement = function(ctx){
     if(startIndex <= endIndex && direction === "TO") {
       for(var i = startIndex; i < endIndex; i++) {
         // execute statements
-        varSymbol.value = i;
+        var varSymbolStore = this.scope.lookup(id.name);
+        varSymbolStore.value = i;
         this.visit(ctx.statement());
       }
 
@@ -556,7 +617,8 @@ visitor.prototype.visitForStatement = function(ctx){
     } else if(startIndex >= endIndex && direction === "DOWNTO") {
       for(var i = startIndex; i > endIndex; i--) {
         // execute statements
-        varSymbol.value = i;
+        var varSymbolStore = this.scope.lookup(id.name);
+        varSymbolStore.value = i;
         this.visit(ctx.statement());
       }
 

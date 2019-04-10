@@ -328,7 +328,7 @@ visitor.prototype.visitAssignmentStatement = function(ctx) {
       if(!varTemp) {
         error = true
         errorMessage = `!!Variable not declared ${temp} at line ${line}`
-      }
+      } if(varType === 'STRING' && varTemp.type.name === 'CHAR'){}
       else if(varType !== varTemp.type.name){
         error = true
         errorMessage = `Data type mismatch: ${varSymbol.name} and ${temp} at line ${line}`
@@ -452,6 +452,8 @@ visitor.prototype.visitFactor = function(ctx){
     return this.visit(ctx.factor())
   if(ctx.getChild(0).constructor.name === "FunctionDesignatorContext")
     return this.visit(ctx.functionDesignator())
+  if(ctx.getChild(0).constructor.name === "VariableContext")
+    return this.visit(ctx.variable()).name
   if(ctx.getChildCount() == 1)
     return ctx.getText()
   else

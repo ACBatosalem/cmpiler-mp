@@ -12,6 +12,9 @@ class ArraySymbol extends Symbol {
         super(name,type);
         this.startIndex = startIndex
         this.endIndex = endIndex;
+        this.arrayValues = []
+        for(var i = startIndex; i <= endIndex; i++)
+          this.arrayValues.push(0)
     }
 
     toString() {

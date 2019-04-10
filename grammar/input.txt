@@ -2,13 +2,16 @@ program cmpilerhw;
 
 var
    a,b: integer;
+   c: array[-1..3] of integer;
 
 begin
-   for a := 69  to 71 do
-   
-   begin
-      writeln('owo: ',a);
-      for b := 1  to 4 do
-         writeln('wa: ',b);
-   end;
+	
+	for b := -1  to 4 do
+	begin
+		writeln('wa: ',b);
+		c[b] := b;
+		writeln('wak ',c[b])
+		end;
+	a := c[1];
+	writeln(-a, -5)
 end.
