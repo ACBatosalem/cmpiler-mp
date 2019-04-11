@@ -149,13 +149,13 @@ var serializedATN = ["\u0003\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964",
     "\u0002\u0002\u0002\u00be\u00cc\u0005\u0012\n\u0002\u00bf\u00c0\u0005",
     "\u0014\u000b\u0002\u00c0\u00c1\u0005\u0012\n\u0002\u00c1\u00cc\u0003",
     "\u0002\u0002\u0002\u00c2\u00cc\u0005\u0018\r\u0002\u00c3\u00cc\u0005",
-    "\u001a\u000e\u0002\u00c4\u00cc\u0005X-\u0002\u00c5\u00c6\u0005\u0014",
-    "\u000b\u0002\u00c6\u00c7\u0005X-\u0002\u00c7\u00cc\u0003\u0002\u0002",
-    "\u0002\u00c8\u00cc\u0005\u0016\f\u0002\u00c9\u00cc\u0005Z.\u0002\u00ca",
-    "\u00cc\u0005l7\u0002\u00cb\u00be\u0003\u0002\u0002\u0002\u00cb\u00bf",
+    "\u001a\u000e\u0002\u00c4\u00cc\u0005l7\u0002\u00c5\u00cc\u0005X-\u0002",
+    "\u00c6\u00c7\u0005\u0014\u000b\u0002\u00c7\u00c8\u0005X-\u0002\u00c8",
+    "\u00cc\u0003\u0002\u0002\u0002\u00c9\u00cc\u0005\u0016\f\u0002\u00ca",
+    "\u00cc\u0005Z.\u0002\u00cb\u00be\u0003\u0002\u0002\u0002\u00cb\u00bf",
     "\u0003\u0002\u0002\u0002\u00cb\u00c2\u0003\u0002\u0002\u0002\u00cb\u00c3",
     "\u0003\u0002\u0002\u0002\u00cb\u00c4\u0003\u0002\u0002\u0002\u00cb\u00c5",
-    "\u0003\u0002\u0002\u0002\u00cb\u00c8\u0003\u0002\u0002\u0002\u00cb\u00c9",
+    "\u0003\u0002\u0002\u0002\u00cb\u00c6\u0003\u0002\u0002\u0002\u00cb\u00c9",
     "\u0003\u0002\u0002\u0002\u00cb\u00ca\u0003\u0002\u0002\u0002\u00cc\u0011",
     "\u0003\u0002\u0002\u0002\u00cd\u00ce\u0007E\u0002\u0002\u00ce\u0013",
     "\u0003\u0002\u0002\u0002\u00cf\u00d0\t\u0002\u0002\u0002\u00d0\u0015",
@@ -1298,6 +1298,10 @@ ConstantContext.prototype.character = function() {
     return this.getTypedRuleContext(CharacterContext,0);
 };
 
+ConstantContext.prototype.functionDesignator = function() {
+    return this.getTypedRuleContext(FunctionDesignatorContext,0);
+};
+
 ConstantContext.prototype.variable = function() {
     return this.getTypedRuleContext(VariableContext,0);
 };
@@ -1308,10 +1312,6 @@ ConstantContext.prototype.bool = function() {
 
 ConstantContext.prototype.expression = function() {
     return this.getTypedRuleContext(ExpressionContext,0);
-};
-
-ConstantContext.prototype.functionDesignator = function() {
-    return this.getTypedRuleContext(FunctionDesignatorContext,0);
 };
 
 ConstantContext.prototype.enterRule = function(listener) {
@@ -1377,33 +1377,33 @@ pascalParser.prototype.constant = function() {
         case 5:
             this.enterOuterAlt(localctx, 5);
             this.state = 194;
-            this.variable();
+            this.functionDesignator();
             break;
 
         case 6:
             this.enterOuterAlt(localctx, 6);
             this.state = 195;
-            this.sign();
-            this.state = 196;
             this.variable();
             break;
 
         case 7:
             this.enterOuterAlt(localctx, 7);
-            this.state = 198;
-            this.bool();
+            this.state = 196;
+            this.sign();
+            this.state = 197;
+            this.variable();
             break;
 
         case 8:
             this.enterOuterAlt(localctx, 8);
             this.state = 199;
-            this.expression();
+            this.bool();
             break;
 
         case 9:
             this.enterOuterAlt(localctx, 9);
             this.state = 200;
-            this.functionDesignator();
+            this.expression();
             break;
 
         }

@@ -79,11 +79,11 @@ constant
    | sign unsignedNumber
    | string
    | character
+   | functionDesignator
    | variable
    | sign variable
    | bool
    | expression
-   | functionDesignator
    ;
 
 unsignedNumber

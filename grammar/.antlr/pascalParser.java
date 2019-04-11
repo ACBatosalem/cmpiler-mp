@@ -537,6 +537,9 @@ public class pascalParser extends Parser {
 		public CharacterContext character() {
 			return getRuleContext(CharacterContext.class,0);
 		}
+		public FunctionDesignatorContext functionDesignator() {
+			return getRuleContext(FunctionDesignatorContext.class,0);
+		}
 		public VariableContext variable() {
 			return getRuleContext(VariableContext.class,0);
 		}
@@ -545,9 +548,6 @@ public class pascalParser extends Parser {
 		}
 		public ExpressionContext expression() {
 			return getRuleContext(ExpressionContext.class,0);
-		}
-		public FunctionDesignatorContext functionDesignator() {
-			return getRuleContext(FunctionDesignatorContext.class,0);
 		}
 		public ConstantContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
@@ -596,37 +596,37 @@ public class pascalParser extends Parser {
 				enterOuterAlt(_localctx, 5);
 				{
 				setState(194);
-				variable();
+				functionDesignator();
 				}
 				break;
 			case 6:
 				enterOuterAlt(_localctx, 6);
 				{
 				setState(195);
-				sign();
-				setState(196);
 				variable();
 				}
 				break;
 			case 7:
 				enterOuterAlt(_localctx, 7);
 				{
-				setState(198);
-				bool();
+				setState(196);
+				sign();
+				setState(197);
+				variable();
 				}
 				break;
 			case 8:
 				enterOuterAlt(_localctx, 8);
 				{
 				setState(199);
-				expression();
+				bool();
 				}
 				break;
 			case 9:
 				enterOuterAlt(_localctx, 9);
 				{
 				setState(200);
-				functionDesignator();
+				expression();
 				}
 				break;
 			}
@@ -3928,10 +3928,10 @@ public class pascalParser extends Parser {
 		"\u00b9\3\2\2\2\u00bc\u00ba\3\2\2\2\u00bc\u00bb\3\2\2\2\u00bd\17\3\2\2"+
 		"\2\u00be\u00cc\5\22\n\2\u00bf\u00c0\5\24\13\2\u00c0\u00c1\5\22\n\2\u00c1"+
 		"\u00cc\3\2\2\2\u00c2\u00cc\5\30\r\2\u00c3\u00cc\5\32\16\2\u00c4\u00cc"+
-		"\5X-\2\u00c5\u00c6\5\24\13\2\u00c6\u00c7\5X-\2\u00c7\u00cc\3\2\2\2\u00c8"+
-		"\u00cc\5\26\f\2\u00c9\u00cc\5Z.\2\u00ca\u00cc\5l\67\2\u00cb\u00be\3\2"+
+		"\5l\67\2\u00c5\u00cc\5X-\2\u00c6\u00c7\5\24\13\2\u00c7\u00c8\5X-\2\u00c8"+
+		"\u00cc\3\2\2\2\u00c9\u00cc\5\26\f\2\u00ca\u00cc\5Z.\2\u00cb\u00be\3\2"+
 		"\2\2\u00cb\u00bf\3\2\2\2\u00cb\u00c2\3\2\2\2\u00cb\u00c3\3\2\2\2\u00cb"+
-		"\u00c4\3\2\2\2\u00cb\u00c5\3\2\2\2\u00cb\u00c8\3\2\2\2\u00cb\u00c9\3\2"+
+		"\u00c4\3\2\2\2\u00cb\u00c5\3\2\2\2\u00cb\u00c6\3\2\2\2\u00cb\u00c9\3\2"+
 		"\2\2\u00cb\u00ca\3\2\2\2\u00cc\21\3\2\2\2\u00cd\u00ce\7E\2\2\u00ce\23"+
 		"\3\2\2\2\u00cf\u00d0\t\2\2\2\u00d0\25\3\2\2\2\u00d1\u00d2\t\3\2\2\u00d2"+
 		"\27\3\2\2\2\u00d3\u00d4\7H\2\2\u00d4\31\3\2\2\2\u00d5\u00d6\7G\2\2\u00d6"+
