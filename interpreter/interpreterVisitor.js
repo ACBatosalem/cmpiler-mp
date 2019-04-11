@@ -133,17 +133,16 @@ visitor.prototype.visitVariableDeclaration = function(ctx) {
   //console.log(variables)
   var type = this.visit(ctx.type())
   //console.log(type)
-
   var varType = type.type != undefined? type.type : type
     const typeSymbol = this.scope.lookup(varType.toUpperCase());
     for(x in variables) {
       var varName = variables[x]
      //console.log(varType + " " + typeSymbol + " " + varName);
       //console.log(this.scope.lookup(varName, true))
-      if(this.scope.lookup(varName, true))
-        throw new Error(`Duplicate declaration of ${varName}`);
+     /* if(this.scope.lookup(varName, true))
+        throw new Error(`Duplicate declaration of ${varName} at ${line}`);
         //console.log("error: duplicate")
-      else if(type.indices == undefined){
+      else */if(type.indices == undefined){
         var varSymbol = new VariableSymbol(varName, typeSymbol);
         this.scope.define(varSymbol)
       } else {
@@ -262,6 +261,7 @@ visitor.prototype.visitConstantDefinition = function(ctx) {
       typeSymbol = this.scope.lookup("CHAR");
     else
       typeSymbol = this.scope.lookup("STRING");
+    value.replace(/\'/g,'')
   } else if(!isNaN(value)) {
     typeSymbol = this.scope.lookup("INTEGER");
   } else {
@@ -304,15 +304,15 @@ visitor.prototype.visitExpression = function(ctx) {
     return this.visit(ctx.simpleExpression())
   
   
-  var operand1 = this.visit(ctx.getChild(0))[0]
+  var operand1 = this.visit(ctx.getChild(0))
   var operation = this.visit(ctx.getChild(1))
   var operand2 = this.visit(ctx.getChild(2))[0]
   var result = operand1
 
-    if(typeof operand1 != "number")
-      operand1 = operand1.toString()
-    if(typeof operand2 != "number")
-      operand2 = operand2.toString()
+    while(Array.isArray(operand1))
+      operand1 = operand1[0]
+      while(Array.isArray(operand2))
+      operand2 = operand2[0]
     if(operation === "="){
       //console.log(operand1 == operand2)
       result = operand1 == operand2
@@ -351,9 +351,9 @@ visitor.prototype.visitSimpleExpression = function(ctx) {
     if(operation === "+") {
       if(typeof operand1 === 'boolean' || typeof operand2 === 'boolean')
         throw new Error(`Cannot add data type boolean at line ${line}`)
-      if(!Number.isNaN(operand1) && !Number.isNaN(operand2))
+      if(!isNaN(operand1) && !isNaN(operand2))
         result = parseInt(operand1) + parseInt(operand2)
-      else result = operand1.getText() + operand2.getText()
+      else result = operand1.toString() + operand2.toString()
     } else if (operation === "-"){
       if (!isNaN(operand1) && !isNaN(operand2))
         result = parseInt(operand1) - parseInt(operand2)
@@ -727,6 +727,8 @@ visitor.prototype.visitParameterList = function(ctx) {
   var variables =[];
   for(var i = 0; i < ctx.getChildCount(); i+=2) {
     var temp = ctx.getChild(i).getText()
+    if(temp.includes('\''))
+      temp = temp.replace(/\'/g,'')
       variables.push(temp)
   }
 
